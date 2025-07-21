@@ -13,3 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Assets/player.png
+/copy:Assets/player.png
+

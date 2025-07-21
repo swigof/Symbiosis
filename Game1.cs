@@ -9,33 +9,41 @@ namespace Symbiosis
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        private Texture2D _playerTexture;
+        private Vector2 _playerPosition;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
+            Content.RootDirectory = "Content/Assets";
             IsMouseVisible = true;
         }
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
+            _playerPosition = new Vector2(0, 0);
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
+            _playerTexture = Content.Load<Texture2D>("player");
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                _playerPosition.Y -= (float) gameTime.ElapsedGameTime.TotalMilliseconds / 4;
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                _playerPosition.Y += (float) gameTime.ElapsedGameTime.TotalMilliseconds / 4;
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                _playerPosition.X -= (float) gameTime.ElapsedGameTime.TotalMilliseconds / 4;
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                _playerPosition.X += (float) gameTime.ElapsedGameTime.TotalMilliseconds / 4;
 
             base.Update(gameTime);
         }
@@ -44,7 +52,9 @@ namespace Symbiosis
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(_playerTexture, _playerPosition, null, Color.White);
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
