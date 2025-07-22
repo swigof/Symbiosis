@@ -1,0 +1,125 @@
+﻿using Backdash;
+using Backdash.Serialization;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using System;
+
+namespace Symbiosis;
+
+public class GameSessionHandler : INetcodeSessionHandler
+{
+    INetcodeSession<PlayerInputs> _session;
+    GameState _gameState;
+    NetcodePlayer _localPlayer;
+
+    public GameSessionHandler(INetcodeSession<PlayerInputs> session)
+    {
+        _session = session;
+        _gameState = new GameState();
+        _session.TryGetLocalPlayer(out _localPlayer);
+
+        _gameState.FrameNumber = 0;
+        _gameState.PlayerPositions = [new Vector2(100, 100), new Vector2(200, 200)];
+    }
+
+    public void Update(GameTime gameTime)
+    {
+        _session.BeginFrame();
+
+        var localInput = PlayerInputs.None;
+
+        if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            localInput |= PlayerInputs.Up;
+        if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            localInput |= PlayerInputs.Down;
+        if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            localInput |= PlayerInputs.Left;
+        if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            localInput |= PlayerInputs.Right;
+
+        _session.AddLocalInput(_localPlayer, localInput);
+        _session.SynchronizeInputs();
+
+        UpdateGameState(_session.CurrentSynchronizedInputs);
+
+        _session.AdvanceFrame();
+    }
+
+    public void UpdateGameState(ReadOnlySpan<SynchronizedInput<PlayerInputs>> inputs)
+    {
+        _gameState.FrameNumber++;
+        for (var i = 0; i < inputs.Length; i++)
+        {
+            if (inputs[i].Input.HasFlag(PlayerInputs.Up))
+                _gameState.PlayerPositions[i].Y--;
+            if (inputs[i].Input.HasFlag(PlayerInputs.Down))
+                _gameState.PlayerPositions[i].Y++;
+            if (inputs[i].Input.HasFlag(PlayerInputs.Left))
+                _gameState.PlayerPositions[i].X--;
+            if (inputs[i].Input.HasFlag(PlayerInputs.Right))
+                _gameState.PlayerPositions[i].X++;
+        }
+    }
+
+    public void Draw(SpriteBatch spriteBatch, Texture2D playerTexture)
+    {
+        foreach (var playerPosition in _gameState.PlayerPositions)
+        {
+            spriteBatch.Draw(playerTexture, playerPosition, null, Color.White);
+        }
+    }
+
+    public void AdvanceFrame()
+    {
+        _session.SynchronizeInputs();
+        UpdateGameState(_session.CurrentSynchronizedInputs);
+        _session.AdvanceFrame(); 
+    }
+
+    public void OnPeerEvent(NetcodePlayer player, PeerEventInfo evt)
+    {
+        //throw new NotImplementedException();
+    }
+
+    public void OnSessionClose()
+    {
+        //throw new NotImplementedException();
+    }
+
+    public void OnSessionStart()
+    {
+        //throw new NotImplementedException();
+    }
+
+    public void LoadState(in Frame frame, ref readonly BinaryBufferReader reader)
+    {
+        //throw new NotImplementedException();
+    }
+
+    public void SaveState(in Frame frame, ref readonly BinaryBufferWriter writer)
+    {
+        //throw new NotImplementedException();
+    }
+
+    public void TimeSync(FrameSpan framesAhead)
+    {
+        //throw new NotImplementedException();
+    }
+}
+
+public record struct GameState
+{
+    public int FrameNumber;
+    public Vector2[] PlayerPositions;
+}
+
+[Flags]
+public enum PlayerInputs : ushort
+{
+    None = 0,
+    Up = 1 << 0,
+    Down = 1 << 1,
+    Left = 1 << 2,
+    Right = 1 << 3
+}

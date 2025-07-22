@@ -2,39 +2,38 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 
 namespace Symbiosis;
-
-[Flags]
-public enum PlayerInputs : ushort
-{
-    None = 0,
-    Up = 1 << 0,
-    Down = 1 << 1,
-    Left = 1 << 2,
-    Right = 1 << 3
-}
 
 public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-
     private Texture2D _playerTexture;
-    private Vector2 _playerPosition;
+
+    private INetcodeSession<PlayerInputs> _session;
+    private GameSessionHandler _sessionHandler;
 
     public Game1(INetcodeSession<PlayerInputs> netcodeSession)
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content/Assets";
         IsMouseVisible = true;
+        _session = netcodeSession;
     }
 
     protected override void Initialize()
     {
-        _playerPosition = new Vector2(0, 0);
         base.Initialize();
+        _session.Start();
+        _sessionHandler = new GameSessionHandler(_session);
+        _session.SetHandler(_sessionHandler);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        _session.Dispose();
+        base.Dispose(disposing);
     }
 
     protected override void LoadContent()
@@ -48,14 +47,7 @@ public class Game1 : Game
         if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            _playerPosition.Y -= (float) gameTime.ElapsedGameTime.TotalMilliseconds / 4;
-        if (Keyboard.GetState().IsKeyDown(Keys.Down))
-            _playerPosition.Y += (float) gameTime.ElapsedGameTime.TotalMilliseconds / 4;
-        if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            _playerPosition.X -= (float) gameTime.ElapsedGameTime.TotalMilliseconds / 4;
-        if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            _playerPosition.X += (float) gameTime.ElapsedGameTime.TotalMilliseconds / 4;
+        _sessionHandler.Update(gameTime);
 
         base.Update(gameTime);
     }
@@ -65,7 +57,7 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
         _spriteBatch.Begin();
-        _spriteBatch.Draw(_playerTexture, _playerPosition, null, Color.White);
+        _sessionHandler.Draw(_spriteBatch, _playerTexture);
         _spriteBatch.End();
 
         base.Draw(gameTime);
