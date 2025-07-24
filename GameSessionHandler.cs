@@ -20,7 +20,7 @@ public class GameSessionHandler : INetcodeSessionHandler
         _session.TryGetLocalPlayer(out _localPlayer);
 
         _gameState.FrameNumber = 0;
-        _gameState.PlayerPositions = [new Vector2(100, 100), new Vector2(200, 200)];
+        _gameState.Players = [new Player(), new Player()];
     }
 
     public void Update(GameTime gameTime)
@@ -52,21 +52,21 @@ public class GameSessionHandler : INetcodeSessionHandler
         for (var i = 0; i < inputs.Length; i++)
         {
             if (inputs[i].Input.HasFlag(PlayerInputs.Up))
-                _gameState.PlayerPositions[i].Y--;
+                _gameState.Players[i].Position.Y--;
             if (inputs[i].Input.HasFlag(PlayerInputs.Down))
-                _gameState.PlayerPositions[i].Y++;
+                _gameState.Players[i].Position.Y++;
             if (inputs[i].Input.HasFlag(PlayerInputs.Left))
-                _gameState.PlayerPositions[i].X--;
+                _gameState.Players[i].Position.X--;
             if (inputs[i].Input.HasFlag(PlayerInputs.Right))
-                _gameState.PlayerPositions[i].X++;
+                _gameState.Players[i].Position.X++;
         }
     }
 
     public void Draw(SpriteBatch spriteBatch, Texture2D playerTexture)
     {
-        foreach (var playerPosition in _gameState.PlayerPositions)
+        foreach (var player in _gameState.Players)
         {
-            spriteBatch.Draw(playerTexture, playerPosition, null, Color.White);
+            spriteBatch.Draw(playerTexture, player.Position, null, Color.White);
         }
     }
 
@@ -94,12 +94,14 @@ public class GameSessionHandler : INetcodeSessionHandler
 
     public void LoadState(in Frame frame, ref readonly BinaryBufferReader reader)
     {
-        //throw new NotImplementedException();
+        reader.Read(ref _gameState.FrameNumber);
+        reader.Read(_gameState.Players);
     }
 
     public void SaveState(in Frame frame, ref readonly BinaryBufferWriter writer)
     {
-        //throw new NotImplementedException();
+        writer.Write(in _gameState.FrameNumber);
+        writer.Write(_gameState.Players);
     }
 
     public void TimeSync(FrameSpan framesAhead)
@@ -111,7 +113,22 @@ public class GameSessionHandler : INetcodeSessionHandler
 public record struct GameState
 {
     public int FrameNumber;
-    public Vector2[] PlayerPositions;
+    public Player[] Players;
+}
+
+public record Player : IBinarySerializable
+{
+    public Vector2 Position;
+
+    public void Deserialize(ref readonly BinaryBufferReader reader)
+    {
+        reader.Read(ref Position);
+    }
+
+    public void Serialize(ref readonly BinaryBufferWriter writer)
+    {
+        writer.Write(in Position);
+    }
 }
 
 [Flags]
