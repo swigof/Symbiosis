@@ -12,6 +12,7 @@ public class GameSessionHandler : INetcodeSessionHandler
     INetcodeSession<PlayerInputs> _session;
     GameState _gameState;
     NetcodePlayer _localPlayer;
+    TimeSpan _sleepTime;
 
     public GameSessionHandler(INetcodeSession<PlayerInputs> session)
     {
@@ -25,6 +26,12 @@ public class GameSessionHandler : INetcodeSessionHandler
 
     public void Update(GameTime gameTime)
     {
+        if (_sleepTime > TimeSpan.Zero)
+        {
+            _sleepTime -= gameTime.ElapsedGameTime;
+            return;
+        }
+
         _session.BeginFrame();
 
         var localInput = PlayerInputs.None;
@@ -106,7 +113,7 @@ public class GameSessionHandler : INetcodeSessionHandler
 
     public void TimeSync(FrameSpan framesAhead)
     {
-        //throw new NotImplementedException();
+        _sleepTime = framesAhead.Duration();
     }
 }
 
