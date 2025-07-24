@@ -45,8 +45,10 @@ public class GameSessionHandler : INetcodeSessionHandler
         if (Keyboard.GetState().IsKeyDown(Keys.Right))
             localInput |= PlayerInputs.Right;
 
-        _session.AddLocalInput(_localPlayer, localInput);
-        _session.SynchronizeInputs();
+        if (_session.AddLocalInput(_localPlayer, localInput) is not ResultCode.Ok)
+            return;
+        if (_session.SynchronizeInputs() is not ResultCode.Ok)
+            return;
 
         UpdateGameState(_session.CurrentSynchronizedInputs);
 
