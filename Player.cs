@@ -2,6 +2,7 @@
 using Backdash.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using static Symbiosis.Collision;
 
 namespace Symbiosis;
 
@@ -12,12 +13,16 @@ public sealed class Player : IBinarySerializable
     public int Radius;
 
     public Texture2D Texture;
+    public Circle BoundingCircle
+    {
+        get => new Circle { Center = Position, Radius = Radius};
+    }
 
     public Player()
     {
         Position = new Vector2(0, 0);
-        Radius = 1;
-        Texture = Game1.GameContent.Load<Texture2D>("player"); ;
+        Radius = 15;
+        Texture = Game1.GameContent.Load<Texture2D>("player");
     }
 
     public void Update(SynchronizedInput<PlayerInputs> inputs)
