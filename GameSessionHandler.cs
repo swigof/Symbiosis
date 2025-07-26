@@ -112,7 +112,7 @@ public class GameSessionHandler : INetcodeSessionHandler
     }
 }
 
-public record struct GameState
+public struct GameState
 {
     public int FrameNumber;
     public Player[] Players;
