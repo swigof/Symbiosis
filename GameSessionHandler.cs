@@ -125,21 +125,6 @@ public record struct GameState
     public Player[] Players;
 }
 
-public record Player : IBinarySerializable
-{
-    public Vector2 Position;
-
-    public void Deserialize(ref readonly BinaryBufferReader reader)
-    {
-        reader.Read(ref Position);
-    }
-
-    public void Serialize(ref readonly BinaryBufferWriter writer)
-    {
-        writer.Write(in Position);
-    }
-}
-
 [Flags]
 public enum PlayerInputs : ushort
 {
