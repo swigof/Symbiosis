@@ -58,16 +58,9 @@ public class GameSessionHandler : INetcodeSessionHandler
     public void UpdateGameState(ReadOnlySpan<SynchronizedInput<PlayerInputs>> inputs)
     {
         _gameState.FrameNumber++;
-        for (var i = 0; i < inputs.Length; i++)
+        for (var i = 0; i < inputs.Length && i < _gameState.Players.Length; i++)
         {
-            if (inputs[i].Input.HasFlag(PlayerInputs.Up))
-                _gameState.Players[i].Position.Y--;
-            if (inputs[i].Input.HasFlag(PlayerInputs.Down))
-                _gameState.Players[i].Position.Y++;
-            if (inputs[i].Input.HasFlag(PlayerInputs.Left))
-                _gameState.Players[i].Position.X--;
-            if (inputs[i].Input.HasFlag(PlayerInputs.Right))
-                _gameState.Players[i].Position.X++;
+            _gameState.Players[i].Update(inputs[i]);
         }
     }
 

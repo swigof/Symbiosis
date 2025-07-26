@@ -1,4 +1,5 @@
-﻿using Backdash.Serialization;
+﻿using Backdash;
+using Backdash.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -19,9 +20,16 @@ public sealed class Player : IBinarySerializable
         Texture = Game1.GameContent.Load<Texture2D>("player"); ;
     }
 
-    public void Update()
+    public void Update(SynchronizedInput<PlayerInputs> inputs)
     {
-
+        if (inputs.Input.HasFlag(PlayerInputs.Up))
+            Position.Y--;
+        if (inputs.Input.HasFlag(PlayerInputs.Down))
+            Position.Y++;
+        if (inputs.Input.HasFlag(PlayerInputs.Left))
+            Position.X--;
+        if (inputs.Input.HasFlag(PlayerInputs.Right))
+            Position.X++;
     }
 
     public void Draw(SpriteBatch spriteBatch)
