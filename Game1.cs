@@ -1,5 +1,6 @@
 ﻿using Backdash;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -7,9 +8,10 @@ namespace Symbiosis;
 
 public class Game1 : Game
 {
+    public static ContentManager GameContent;
+
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private Texture2D _playerTexture;
 
     private INetcodeSession<PlayerInputs> _session;
     private GameSessionHandler _sessionHandler;
@@ -20,6 +22,7 @@ public class Game1 : Game
         Content.RootDirectory = "Content/Assets";
         IsMouseVisible = true;
         _session = netcodeSession;
+        GameContent = Content;
     }
 
     protected override void Initialize()
@@ -39,7 +42,6 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _playerTexture = Content.Load<Texture2D>("player");
     }
 
     protected override void Update(GameTime gameTime)
@@ -57,7 +59,7 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
         _spriteBatch.Begin();
-        _sessionHandler.Draw(_spriteBatch, _playerTexture);
+        _sessionHandler.Draw(_spriteBatch);
         _spriteBatch.End();
 
         base.Draw(gameTime);

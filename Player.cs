@@ -16,7 +16,7 @@ public sealed class Player : IBinarySerializable
     {
         Position = new Vector2(0, 0);
         Radius = 1;
-        Texture = null;
+        Texture = Game1.GameContent.Load<Texture2D>("player"); ;
     }
 
     public void Update()
@@ -24,9 +24,9 @@ public sealed class Player : IBinarySerializable
 
     }
 
-    public void Draw()
+    public void Draw(SpriteBatch spriteBatch)
     {
-
+        spriteBatch.Draw(Texture, Position, null, Color.White);
     }
 
     public void Deserialize(ref readonly BinaryBufferReader reader)

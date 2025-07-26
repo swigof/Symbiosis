@@ -71,11 +71,11 @@ public class GameSessionHandler : INetcodeSessionHandler
         }
     }
 
-    public void Draw(SpriteBatch spriteBatch, Texture2D playerTexture)
+    public void Draw(SpriteBatch spriteBatch)
     {
         foreach (var player in _gameState.Players)
         {
-            spriteBatch.Draw(playerTexture, player.Position, null, Color.White);
+            player.Draw(spriteBatch);
         }
     }
 
