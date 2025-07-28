@@ -24,6 +24,8 @@ public class GameSessionHandler : INetcodeSessionHandler
 
         _gameState.FrameNumber = 0;
         _gameState.Players = [new Player(), new Player()];
+        _gameState.Players[0].IsCursorPlayer = true;
+        _gameState.Players[_localPlayer.Index].IsLocal = true;
         _gameState.PreviousInputs = new PlayerInputs[2];
 
         _localInput = new PlayerInputs();
@@ -80,6 +82,11 @@ public class GameSessionHandler : INetcodeSessionHandler
         {
             player.Draw(spriteBatch);
         }
+    }
+
+    public bool IsLocalCursorPlayer()
+    {
+        return _gameState.Players[0].IsLocal;
     }
 
     public void AdvanceFrame()

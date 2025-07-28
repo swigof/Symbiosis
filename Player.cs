@@ -13,7 +13,11 @@ public sealed class Player : IBinarySerializable
     public Vector2 Position;
     public int Radius;
 
+    public bool IsLocal;
+    public bool IsCursorPlayer;
     public Texture2D Texture;
+    public Texture2D CursorTexture;
+    public Vector2 CursorRenderPosition;
     public Circle BoundingCircle
     {
         get => new Circle { Center = Position, Radius = Radius};
@@ -23,7 +27,11 @@ public sealed class Player : IBinarySerializable
     {
         Position = new Vector2(0, 0);
         Radius = 15;
+        CursorRenderPosition = new Vector2(0, 0);
         Texture = Game1.GameContent.Load<Texture2D>("player");
+        CursorTexture = Game1.GameContent.Load<Texture2D>("cursor_none");
+        IsLocal = false;
+        IsCursorPlayer = false;
     }
 
     public void Update(SynchronizedInput<PlayerInputs> inputs)
@@ -36,11 +44,19 @@ public sealed class Player : IBinarySerializable
             Position.X--;
         if (inputs.Input.DigitalInputs.HasFlag(DigitalInputs.Right))
             Position.X++;
+
+        if (IsCursorPlayer && !IsLocal)
+        {
+            CursorRenderPosition.X = inputs.Input.CursorPosition.X;
+            CursorRenderPosition.Y = inputs.Input.CursorPosition.Y;
+        }
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(Texture, Position, null, Color.White);
+        if (IsCursorPlayer && !IsLocal)
+            spriteBatch.Draw(CursorTexture, CursorRenderPosition, null, Color.White);
     }
 
     public void Deserialize(ref readonly BinaryBufferReader reader)

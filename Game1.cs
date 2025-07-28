@@ -21,7 +21,7 @@ public class Game1 : Game
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content/Assets";
-        IsMouseVisible = true;
+        IsMouseVisible = false;
         _session = netcodeSession;
         GameContent = Content;
     }
@@ -32,6 +32,11 @@ public class Game1 : Game
         _session.Start();
         _sessionHandler = new GameSessionHandler(_session);
         _session.SetHandler(_sessionHandler);
+
+        if (_sessionHandler.IsLocalCursorPlayer())
+            IsMouseVisible = true;
+        else
+            IsMouseVisible = false;
     }
 
     protected override void Dispose(bool disposing)
@@ -43,6 +48,7 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+        Mouse.SetCursor(MouseCursor.FromTexture2D(GameContent.Load<Texture2D>("cursor_none"), 0, 0));
     }
 
     protected override void Update(GameTime gameTime)

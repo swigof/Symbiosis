@@ -13,6 +13,9 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Assets/cursor_none.png
+/copy:Assets/cursor_none.png
+
 #begin Assets/player.png
 /copy:Assets/player.png
 
