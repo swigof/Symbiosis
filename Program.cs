@@ -1,14 +1,16 @@
 ﻿using Backdash;
 using Symbiosis;
+using Symbiosis.Input;
 using System;
 using System.Net;
 
-var sessionBuilder = RollbackNetcode.WithInputType<PlayerInputs>();
+var inputSerializer = new StructBinarySerializer<PlayerInputs>();
+var sessionBuilder = RollbackNetcode.WithInputType(t => t.Custom(inputSerializer));
 
 Console.Write("(L)ocal or (R)emote: ");
 var mode = Console.ReadLine();
 
-if (mode.StartsWith("R")) {
+if (mode.ToUpper().StartsWith("R")) {
     Console.Write("Port to use: ");
     var port = Convert.ToInt32(Console.ReadLine());
     Console.Write("Remote IP and port to connect to: ");

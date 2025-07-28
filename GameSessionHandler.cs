@@ -3,6 +3,7 @@ using Backdash.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Symbiosis.Input;
 using System;
 
 namespace Symbiosis;
@@ -13,6 +14,7 @@ public class GameSessionHandler : INetcodeSessionHandler
     GameState _gameState;
     NetcodePlayer _localPlayer;
     TimeSpan _sleepTime;
+    PlayerInputs _localInput;
 
     public GameSessionHandler(INetcodeSession<PlayerInputs> session)
     {
@@ -22,6 +24,8 @@ public class GameSessionHandler : INetcodeSessionHandler
 
         _gameState.FrameNumber = 0;
         _gameState.Players = [new Player(), new Player()];
+
+        _localInput = new PlayerInputs();
     }
 
     public void Update(GameTime gameTime)
@@ -34,18 +38,22 @@ public class GameSessionHandler : INetcodeSessionHandler
 
         _session.BeginFrame();
 
-        var localInput = PlayerInputs.None;
+        _localInput.DigitalInputs = DigitalInputs.None;
 
         if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            localInput |= PlayerInputs.Up;
+            _localInput.DigitalInputs |= DigitalInputs.Up;
         if (Keyboard.GetState().IsKeyDown(Keys.Down))
-            localInput |= PlayerInputs.Down;
+            _localInput.DigitalInputs |= DigitalInputs.Down;
         if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            localInput |= PlayerInputs.Left;
+            _localInput.DigitalInputs |= DigitalInputs.Left;
         if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            localInput |= PlayerInputs.Right;
+            _localInput.DigitalInputs |= DigitalInputs.Right;
+        if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+            _localInput.DigitalInputs |= DigitalInputs.Click;
+        _localInput.CursorPosition.X = Mouse.GetState().X;
+        _localInput.CursorPosition.Y = Mouse.GetState().Y;
 
-        if (_session.AddLocalInput(_localPlayer, localInput) is not ResultCode.Ok)
+        if (_session.AddLocalInput(_localPlayer, _localInput) is not ResultCode.Ok)
             return;
         if (_session.SynchronizeInputs() is not ResultCode.Ok)
             return;
@@ -116,14 +124,4 @@ public struct GameState
 {
     public int FrameNumber;
     public Player[] Players;
-}
-
-[Flags]
-public enum PlayerInputs : ushort
-{
-    None = 0,
-    Up = 1 << 0,
-    Down = 1 << 1,
-    Left = 1 << 2,
-    Right = 1 << 3
 }

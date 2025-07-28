@@ -2,6 +2,7 @@
 using Backdash.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Symbiosis.Input;
 using static Symbiosis.Collision;
 
 namespace Symbiosis;
@@ -27,13 +28,13 @@ public sealed class Player : IBinarySerializable
 
     public void Update(SynchronizedInput<PlayerInputs> inputs)
     {
-        if (inputs.Input.HasFlag(PlayerInputs.Up))
+        if (inputs.Input.DigitalInputs.HasFlag(DigitalInputs.Up))
             Position.Y--;
-        if (inputs.Input.HasFlag(PlayerInputs.Down))
+        if (inputs.Input.DigitalInputs.HasFlag(DigitalInputs.Down))
             Position.Y++;
-        if (inputs.Input.HasFlag(PlayerInputs.Left))
+        if (inputs.Input.DigitalInputs.HasFlag(DigitalInputs.Left))
             Position.X--;
-        if (inputs.Input.HasFlag(PlayerInputs.Right))
+        if (inputs.Input.DigitalInputs.HasFlag(DigitalInputs.Right))
             Position.X++;
     }
 
