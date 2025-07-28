@@ -24,6 +24,7 @@ public class GameSessionHandler : INetcodeSessionHandler
 
         _gameState.FrameNumber = 0;
         _gameState.Players = [new Player(), new Player()];
+        _gameState.PreviousInputs = new PlayerInputs[2];
 
         _localInput = new PlayerInputs();
     }
@@ -69,6 +70,7 @@ public class GameSessionHandler : INetcodeSessionHandler
         for (var i = 0; i < inputs.Length && i < _gameState.Players.Length; i++)
         {
             _gameState.Players[i].Update(inputs[i]);
+            _gameState.PreviousInputs[i] = inputs[i];
         }
     }
 
@@ -106,12 +108,14 @@ public class GameSessionHandler : INetcodeSessionHandler
     {
         reader.Read(ref _gameState.FrameNumber);
         reader.Read(_gameState.Players);
+        reader.Read(_gameState.PreviousInputs);
     }
 
     public void SaveState(in Frame frame, ref readonly BinaryBufferWriter writer)
     {
         writer.Write(in _gameState.FrameNumber);
         writer.Write(_gameState.Players);
+        writer.Write(_gameState.PreviousInputs);
     }
 
     public void TimeSync(FrameSpan framesAhead)
@@ -124,4 +128,5 @@ public struct GameState
 {
     public int FrameNumber;
     public Player[] Players;
+    public PlayerInputs[] PreviousInputs;
 }
