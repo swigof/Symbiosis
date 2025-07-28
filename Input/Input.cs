@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Backdash.Serialization;
+using System;
 using System.Runtime.InteropServices;
 
 namespace Symbiosis.Input;
@@ -22,8 +23,27 @@ public record struct CursorPosition
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public record struct PlayerInputs
+public record struct PlayerInputs : IBinarySerializable
 {
-    public DigitalInputs DigitalInputs;
+    private ushort _digitalInputs;
+    public DigitalInputs DigitalInputs
+    {
+        get => (DigitalInputs)_digitalInputs;
+        set => _digitalInputs = (ushort)value;
+    }
     public CursorPosition CursorPosition;
+
+    public void Deserialize(ref readonly BinaryBufferReader reader)
+    {
+        reader.Read(ref _digitalInputs);
+        reader.Read(ref CursorPosition.X);
+        reader.Read(ref CursorPosition.Y);
+    }
+
+    public void Serialize(ref readonly BinaryBufferWriter writer)
+    {
+        writer.Write(in _digitalInputs);
+        writer.Write(in CursorPosition.X);
+        writer.Write(in CursorPosition.Y);
+    }
 }
