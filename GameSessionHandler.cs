@@ -3,6 +3,7 @@ using Backdash.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Symbiosis.Entity;
 using Symbiosis.Input;
 using System;
 
@@ -23,9 +24,9 @@ public class GameSessionHandler : INetcodeSessionHandler
         _session.TryGetLocalPlayer(out _localPlayer);
 
         _gameState.FrameNumber = 0;
-        _gameState.Players = [new Player(), new Player()];
-        _gameState.Players[0].IsCursorPlayer = true;
-        _gameState.Players[_localPlayer.Index].IsLocal = true;
+        // Default player 1 to spider and 2 to frog for now
+        _gameState.Spider = new Spider(_localPlayer.Index == 0);
+        _gameState.Frog = new Frog(_localPlayer.Index == 1);
         _gameState.PreviousInputs = new PlayerInputs[2];
 
         _localInput = new PlayerInputs();
@@ -69,25 +70,19 @@ public class GameSessionHandler : INetcodeSessionHandler
     public void UpdateGameState(ReadOnlySpan<SynchronizedInput<PlayerInputs>> inputs)
     {
         _gameState.FrameNumber++;
-        for (var i = 0; i < inputs.Length && i < _gameState.Players.Length; i++)
-        {
-            _gameState.Players[i].Update(inputs[i]);
-            _gameState.PreviousInputs[i] = inputs[i];
-        }
+        _gameState.Spider.Update(inputs[0].Input);
+        _gameState.Frog.Update(inputs[1].Input);
+        _gameState.PreviousInputs[0] = inputs[0];
+        _gameState.PreviousInputs[1] = inputs[1];
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        foreach (var player in _gameState.Players)
-        {
-            player.Draw(spriteBatch);
-        }
+        _gameState.Frog.Draw(spriteBatch);
+        _gameState.Spider.Draw(spriteBatch);
     }
 
-    public bool IsLocalCursorPlayer()
-    {
-        return _gameState.Players[0].IsLocal;
-    }
+    public bool IsLocalCursorPlayer() => _gameState.Spider.IsLocalPlayer;
 
     public void AdvanceFrame()
     {
@@ -114,14 +109,16 @@ public class GameSessionHandler : INetcodeSessionHandler
     public void LoadState(in Frame frame, ref readonly BinaryBufferReader reader)
     {
         reader.Read(ref _gameState.FrameNumber);
-        reader.Read(_gameState.Players);
+        reader.Read(_gameState.Spider);
+        reader.Read(_gameState.Frog);
         reader.Read(_gameState.PreviousInputs);
     }
 
     public void SaveState(in Frame frame, ref readonly BinaryBufferWriter writer)
     {
         writer.Write(in _gameState.FrameNumber);
-        writer.Write(_gameState.Players);
+        writer.Write(_gameState.Spider);
+        writer.Write(_gameState.Frog);
         writer.Write(_gameState.PreviousInputs);
     }
 
@@ -134,6 +131,7 @@ public class GameSessionHandler : INetcodeSessionHandler
 public struct GameState
 {
     public int FrameNumber;
-    public Player[] Players;
+    public Spider Spider;
+    public Frog Frog;
     public PlayerInputs[] PreviousInputs;
 }

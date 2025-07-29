@@ -49,6 +49,8 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         Mouse.SetCursor(MouseCursor.FromTexture2D(GameContent.Load<Texture2D>("cursor_none"), 0, 0));
+        GameContent.Load<Texture2D>("frog");
+        GameContent.Load<Texture2D>("spider");
     }
 
     protected override void Update(GameTime gameTime)
