@@ -13,7 +13,6 @@ public class GameSessionHandler : INetcodeSessionHandler
 {
     INetcodeSession<PlayerInputs> _session;
     GameState _gameState;
-    NetcodePlayer _localPlayer;
     TimeSpan _sleepTime;
     PlayerInputs _localInput;
     Vector2 _remoteCursorPosition;
@@ -23,15 +22,24 @@ public class GameSessionHandler : INetcodeSessionHandler
     {
         _session = session;
         _gameState = new GameState();
-        _session.TryGetLocalPlayer(out _localPlayer);
         _remoteCursorPosition = Vector2.Zero;
         _cursorTexture = Game1.GameContent.Load<Texture2D>("cursor_none");
 
         _gameState.FrameNumber = 0;
-        // Default player 1 to spider and 2 to frog for now
-        _gameState.Spider = new Spider(_localPlayer.Index == 0);
-        _gameState.Frog = new Frog(_localPlayer.Index == 1);
         _gameState.PreviousInputs = new PlayerInputs[2];
+        if (_session.IsLocal())
+        {
+            _gameState.Spider = new Spider(true);
+            _gameState.Frog = new Frog(true);
+        }
+        else
+        {
+            // Default player 1 to spider and 2 to frog for now
+            NetcodePlayer localPlayer;
+            _session.TryGetLocalPlayer(out localPlayer);
+            _gameState.Spider = new Spider(localPlayer != null && localPlayer.Index == 0);
+            _gameState.Frog = new Frog(localPlayer != null && localPlayer.Index == 1);
+        }
 
         _localInput = new PlayerInputs();
     }
@@ -61,8 +69,15 @@ public class GameSessionHandler : INetcodeSessionHandler
         _localInput.CursorPosition.X = Mouse.GetState().X;
         _localInput.CursorPosition.Y = Mouse.GetState().Y;
 
-        if (_session.AddLocalInput(_localPlayer, _localInput) is not ResultCode.Ok)
-            return;
+        foreach (var player in _session.GetPlayers())
+        {
+            if (player.IsLocal())
+            {
+                if (_session.AddLocalInput(player, _localInput) is not ResultCode.Ok)
+                    return;
+            }
+        }
+
         if (_session.SynchronizeInputs() is not ResultCode.Ok)
             return;
 
@@ -78,7 +93,7 @@ public class GameSessionHandler : INetcodeSessionHandler
         _gameState.Frog.Update(inputs[1].Input);
         _gameState.PreviousInputs[0] = inputs[0];
         _gameState.PreviousInputs[1] = inputs[1];
-        if (!_gameState.Spider.IsLocalPlayer)
+        if (!IsLocalCursorPlayer())
         {
             _remoteCursorPosition.X = inputs[0].Input.CursorPosition.X;
             _remoteCursorPosition.Y = inputs[0].Input.CursorPosition.Y;
@@ -89,7 +104,7 @@ public class GameSessionHandler : INetcodeSessionHandler
     {
         _gameState.Frog.Draw(spriteBatch);
         _gameState.Spider.Draw(spriteBatch);
-        if (!_gameState.Spider.IsLocalPlayer)
+        if (!IsLocalCursorPlayer())
             spriteBatch.Draw(_cursorTexture, _remoteCursorPosition, null, Color.White);
     }
 
