@@ -16,12 +16,16 @@ public class GameSessionHandler : INetcodeSessionHandler
     NetcodePlayer _localPlayer;
     TimeSpan _sleepTime;
     PlayerInputs _localInput;
+    Vector2 _remoteCursorPosition;
+    Texture2D _cursorTexture;
 
     public GameSessionHandler(INetcodeSession<PlayerInputs> session)
     {
         _session = session;
         _gameState = new GameState();
         _session.TryGetLocalPlayer(out _localPlayer);
+        _remoteCursorPosition = Vector2.Zero;
+        _cursorTexture = Game1.GameContent.Load<Texture2D>("cursor_none");
 
         _gameState.FrameNumber = 0;
         // Default player 1 to spider and 2 to frog for now
@@ -74,12 +78,19 @@ public class GameSessionHandler : INetcodeSessionHandler
         _gameState.Frog.Update(inputs[1].Input);
         _gameState.PreviousInputs[0] = inputs[0];
         _gameState.PreviousInputs[1] = inputs[1];
+        if (!_gameState.Spider.IsLocalPlayer)
+        {
+            _remoteCursorPosition.X = inputs[0].Input.CursorPosition.X;
+            _remoteCursorPosition.Y = inputs[0].Input.CursorPosition.Y;
+        }
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
         _gameState.Frog.Draw(spriteBatch);
         _gameState.Spider.Draw(spriteBatch);
+        if (!_gameState.Spider.IsLocalPlayer)
+            spriteBatch.Draw(_cursorTexture, _remoteCursorPosition, null, Color.White);
     }
 
     public bool IsLocalCursorPlayer() => _gameState.Spider.IsLocalPlayer;
