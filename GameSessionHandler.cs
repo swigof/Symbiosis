@@ -11,6 +11,8 @@ namespace Symbiosis;
 
 public class GameSessionHandler : INetcodeSessionHandler
 {
+    static Color QuarterTransparent = new Color(255, 255, 255, 255/4);
+
     INetcodeSession<PlayerInputs> _session;
     GameState _gameState;
     TimeSpan _sleepTime;
@@ -105,7 +107,7 @@ public class GameSessionHandler : INetcodeSessionHandler
         _gameState.Frog.Draw(spriteBatch);
         _gameState.Spider.Draw(spriteBatch);
         if (!IsLocalCursorPlayer())
-            spriteBatch.Draw(_cursorTexture, _remoteCursorPosition, null, Color.White);
+            spriteBatch.Draw(_cursorTexture, _remoteCursorPosition, null, QuarterTransparent);
     }
 
     public bool IsLocalCursorPlayer() => _gameState.Spider.IsLocalPlayer;
