@@ -20,18 +20,12 @@ public class Frog(bool isLocalPlayer) : IBinarySerializable
 {
     // Game State
     Vector2 _position = new Vector2(200, 200);
-    int _radius = 12;
-    byte _hopDirectionByte = 0;
-    HopDirection _hopDirection
-    {
-        get => (HopDirection)_hopDirectionByte;
-        set => _hopDirectionByte = (byte)value;
-    }
-    int _hopFrame = 0;
-    int _hopCooldown = 0;
+    HopDirection _hopDirection = HopDirection.None;
+    byte _hopFrame = 0;
+    byte _hopCooldown = 0;
     Vector2 _facingDirection = new Vector2(0, -1);
     bool _tonguing = false;
-    int _tongueFrame = 0;
+    byte _tongueFrame = 0;
 
     Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("frog");
     Texture2D _tongueSegmentTexture = Game1.GameContent.Load<Texture2D>("8pxcircle");
@@ -39,14 +33,15 @@ public class Frog(bool isLocalPlayer) : IBinarySerializable
     public int _tongueSegmentCount = 0;
     public Circle BoundingCircle { get => new Circle { Center = _position, Radius = _radius }; }
 
-    private const int _hopFrameLength = 10;
-    private const int _hopDelay = 15;
-    private const float _hopFrameRotation = MathHelper.Pi / (_hopFrameLength * 8);
-    private const int _tongueExtendFrameLength = 7;
-    private const int _tongueSegmentRadius = 6;
-    private const int _tongueSegmentSpacing = 6;
-    private readonly Vector2 _spriteCenter = new Vector2(16, 16);
-    private readonly Vector2 _tongueSpriteCenter = new Vector2(4, 4);
+    const int _hopFrameLength = 10;
+    const int _hopDelay = 15;
+    const float _hopFrameRotation = MathHelper.Pi / (_hopFrameLength * 8);
+    const int _tongueExtendFrameLength = 7;
+    const int _tongueSegmentRadius = 6;
+    const int _tongueSegmentSpacing = 6;
+    const int _radius = 12;
+    static readonly Vector2 _spriteCenter = new Vector2(16, 16);
+    static readonly Vector2 _tongueSpriteCenter = new Vector2(4, 4);
 
     public void Update(PlayerInputs inputs)
     {
@@ -185,20 +180,24 @@ public class Frog(bool isLocalPlayer) : IBinarySerializable
 
     public void Deserialize(ref readonly BinaryBufferReader reader)
     {
+        byte _hopDirectionByte = 0;
+
         reader.Read(ref _position);
-        reader.Read(ref _radius);
         reader.Read(ref _hopDirectionByte);
         reader.Read(ref _hopFrame);
         reader.Read(ref _hopCooldown);
         reader.Read(ref _tonguing);
         reader.Read(ref _tongueFrame);
         reader.Read(ref _facingDirection);
+
+        _hopDirection = (HopDirection)_hopDirectionByte;
     }
 
     public void Serialize(ref readonly BinaryBufferWriter writer)
     {
+        byte _hopDirectionByte = (byte)_hopDirection;
+
         writer.Write(in _position);
-        writer.Write(in _radius);
         writer.Write(in _hopDirectionByte);
         writer.Write(in _hopFrame);
         writer.Write(in _hopCooldown);

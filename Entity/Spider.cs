@@ -18,13 +18,7 @@ public class Spider(bool isLocalPlayer) : IBinarySerializable
 {
     // Game State
     Vector2 _position = _home;
-    int _radius = 12;
-    byte _movementByte = 0;
-    SpiderMovement _movement
-    {
-        get => (SpiderMovement)_movementByte;
-        set => _movementByte = (byte)value;
-    }
+    SpiderMovement _movement = SpiderMovement.None;
     Vector2 _target = Vector2.Zero;
 
     Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("spider");
@@ -34,6 +28,7 @@ public class Spider(bool isLocalPlayer) : IBinarySerializable
     public bool IsLocalPlayer = isLocalPlayer;
     public Circle BoundingCircle { get => new Circle { Center = _position, Radius = _radius }; }
 
+    const int _radius = 12;
     static readonly Vector2 _home = new Vector2(400, 200);
     static readonly Vector2 _spriteCenter = new Vector2(16, 16);
 
@@ -93,17 +88,24 @@ public class Spider(bool isLocalPlayer) : IBinarySerializable
 
     public void Deserialize(ref readonly BinaryBufferReader reader)
     {
+        byte movementByte = 0;
+
         reader.Read(ref _position);
-        reader.Read(ref _radius);
-        reader.Read(ref _movementByte);
+        reader.Read(ref movementByte);
         reader.Read(ref _target);
+
+        _movement = (SpiderMovement)movementByte;
+        var movementVector = _target - _position;
+        _movementDistanceSquared = movementVector.LengthSquared();
+        _direction = Vector2.Normalize(movementVector);
     }
 
     public void Serialize(ref readonly BinaryBufferWriter writer)
     {
+        byte movementByte = (byte)_movement;
+
         writer.Write(in _position);
-        writer.Write(in _radius);
-        writer.Write(in _movementByte);
+        writer.Write(in movementByte);
         writer.Write(in _target);
     }
 }
