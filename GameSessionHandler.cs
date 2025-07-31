@@ -66,6 +66,8 @@ public class GameSessionHandler : INetcodeSessionHandler
             _localInput.DigitalInputs |= DigitalInputs.Left;
         if (Keyboard.GetState().IsKeyDown(Keys.Right))
             _localInput.DigitalInputs |= DigitalInputs.Right;
+        if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            _localInput.DigitalInputs |= DigitalInputs.Action;
         if (Mouse.GetState().LeftButton == ButtonState.Pressed)
             _localInput.DigitalInputs |= DigitalInputs.Click;
         _localInput.CursorPosition.X = Mouse.GetState().X;

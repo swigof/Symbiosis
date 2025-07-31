@@ -28,40 +28,75 @@ public class Frog(bool isLocalPlayer) : IBinarySerializable
         set => _hopDirectionByte = (byte)value;
     }
     int _hopFrame = 0;
+    int _hopCooldown = 0;
     Vector2 _facingDirection = new Vector2(0, -1);
+    bool _tonguing = false;
+    int _tongueFrame = 0;
 
     Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("frog");
+    Texture2D _tongueSegmentTexture = Game1.GameContent.Load<Texture2D>("8pxcircle");
     public bool IsLocalPlayer = isLocalPlayer;
+    public int _tongueSegmentCount = 0;
     public Circle BoundingCircle { get => new Circle { Center = _position, Radius = _radius }; }
 
     private const int _hopFrameLength = 10;
-    private const int _hopFrameLengthWithDelay = _hopFrameLength + 15;
+    private const int _hopDelay = 15;
     private const float _hopFrameRotation = MathHelper.Pi / (_hopFrameLength * 8);
+    private const int _tongueExtendFrameLength = 7;
+    private const int _tongueSegmentRadius = 6;
+    private const int _tongueSegmentSpacing = 6;
     private readonly Vector2 _spriteCenter = new Vector2(16, 16);
+    private readonly Vector2 _tongueSpriteCenter = new Vector2(4, 4);
 
     public void Update(PlayerInputs inputs)
     {
-        if (_hopDirection == HopDirection.None)
+        if (_hopDirection == HopDirection.None && !_tonguing)
         {
-            if (inputs.DigitalInputs.HasFlag(DigitalInputs.Down))
+            if (inputs.DigitalInputs.HasFlag(DigitalInputs.Action))
             {
-                _hopDirection = HopDirection.Backward;
-                _hopFrame = 0;
+                _tonguing = true;
+                _tongueFrame = 0;
             }
-            else if (inputs.DigitalInputs.HasFlag(DigitalInputs.Up))
+            else if (_hopCooldown <= 0)
             {
-                _hopDirection = HopDirection.Forward;
-                _hopFrame = 0;
+                if (inputs.DigitalInputs.HasFlag(DigitalInputs.Down))
+                {
+                    _hopDirection = HopDirection.Backward;
+                    _hopFrame = 0;
+                }
+                else if (inputs.DigitalInputs.HasFlag(DigitalInputs.Up))
+                {
+                    _hopDirection = HopDirection.Forward;
+                    _hopFrame = 0;
+                }
+                else if (inputs.DigitalInputs.HasFlag(DigitalInputs.Left))
+                {
+                    _hopDirection = HopDirection.Left;
+                    _hopFrame = 0;
+                }
+                else if (inputs.DigitalInputs.HasFlag(DigitalInputs.Right))
+                {
+                    _hopDirection = HopDirection.Right;
+                    _hopFrame = 0;
+                }
             }
-            else if (inputs.DigitalInputs.HasFlag(DigitalInputs.Left))
+        }
+
+        if (_tonguing)
+        {
+            if (_tongueFrame < _tongueExtendFrameLength)
             {
-                _hopDirection = HopDirection.Left;
-                _hopFrame = 0;
+                _tongueSegmentCount = _tongueFrame + 1;
             }
-            else if (inputs.DigitalInputs.HasFlag(DigitalInputs.Right))
+            else
             {
-                _hopDirection = HopDirection.Right;
-                _hopFrame = 0;
+                _tongueSegmentCount = _tongueExtendFrameLength - ((_tongueFrame - _tongueExtendFrameLength) / 2);
+            }
+
+            _tongueFrame++;
+            if (_tongueFrame > _tongueExtendFrameLength + _tongueExtendFrameLength * 2)
+            {
+                _tonguing = false;
             }
         }
 
@@ -92,18 +127,36 @@ public class Frog(bool isLocalPlayer) : IBinarySerializable
                     }
                 }
             }
-
             _hopFrame++;
-            if (_hopFrame >= _hopFrameLengthWithDelay)
+            if (_hopFrame >= _hopFrameLength)
             {
                 _hopDirection = HopDirection.None;
+                _hopCooldown = _hopDelay;
             }
+        }
+        else if (_hopCooldown > 0)
+        {
+            _hopCooldown--;
         }
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
         var rotation = (float) Math.Atan2(_facingDirection.X, -_facingDirection.Y);
+        foreach (var circle in GetTongueBoundingCircles())
+        {
+            spriteBatch.Draw(
+                _tongueSegmentTexture,
+                circle.Center,
+                null,
+                Color.Pink,
+                rotation,
+                _tongueSpriteCenter,
+                1.5f,
+                SpriteEffects.None,
+                0
+            );
+        }
         spriteBatch.Draw(
             _idleTexture,
             _position,
@@ -117,12 +170,28 @@ public class Frog(bool isLocalPlayer) : IBinarySerializable
         );
     }
 
+    public Circle[] GetTongueBoundingCircles()
+    {
+        Circle[] circles = new Circle[_tongueSegmentCount];
+        for (var i = 0; i < _tongueSegmentCount; i++)
+        {
+            circles[i] = new Circle { 
+                Center = _position + _facingDirection * (_tongueSegmentSpacing * i + 10),
+                Radius = _tongueSegmentRadius 
+            };
+        }
+        return circles;
+    }
+
     public void Deserialize(ref readonly BinaryBufferReader reader)
     {
         reader.Read(ref _position);
         reader.Read(ref _radius);
         reader.Read(ref _hopDirectionByte);
         reader.Read(ref _hopFrame);
+        reader.Read(ref _hopCooldown);
+        reader.Read(ref _tonguing);
+        reader.Read(ref _tongueFrame);
         reader.Read(ref _facingDirection);
     }
 
@@ -132,6 +201,9 @@ public class Frog(bool isLocalPlayer) : IBinarySerializable
         writer.Write(in _radius);
         writer.Write(in _hopDirectionByte);
         writer.Write(in _hopFrame);
+        writer.Write(in _hopCooldown);
+        writer.Write(in _tonguing);
+        writer.Write(in _tongueFrame);
         writer.Write(in _facingDirection);
     }
 }

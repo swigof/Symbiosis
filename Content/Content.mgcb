@@ -13,14 +13,14 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Assets/8pxcircle.png
+/copy:Assets/8pxcircle.png
+
 #begin Assets/cursor_none.png
 /copy:Assets/cursor_none.png
 
 #begin Assets/frog.png
 /copy:Assets/frog.png
-
-#begin Assets/player.png
-/copy:Assets/player.png
 
 #begin Assets/spider.png
 /copy:Assets/spider.png
