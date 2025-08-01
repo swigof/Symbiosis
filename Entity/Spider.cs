@@ -17,7 +17,7 @@ internal enum SpiderMovement : byte
 public class Spider(bool isLocalPlayer) : IBinarySerializable
 {
     // Game State
-    Vector2 _position = _home;
+    Vector2 _position = Home;
     SpiderMovement _movement = SpiderMovement.None;
     Vector2 _target = Vector2.Zero;
 
@@ -29,8 +29,8 @@ public class Spider(bool isLocalPlayer) : IBinarySerializable
     public Circle BoundingCircle { get => new Circle { Center = _position, Radius = _radius }; }
 
     const int _radius = 24;
-    static readonly Vector2 _home = new Vector2(400, 200);
     static readonly Vector2 _spriteCenter = new Vector2(16, 16);
+    public static readonly Vector2 Home = new Vector2(400, 200);
 
     public void Update(PlayerInputs inputs)
     {
@@ -51,7 +51,7 @@ public class Spider(bool isLocalPlayer) : IBinarySerializable
         {
             _position += _direction * 4;
 
-            if ((_position - _home).LengthSquared() >= _movementDistanceSquared)
+            if ((_position - Home).LengthSquared() >= _movementDistanceSquared)
             {
                 _position = _target;
                 _rotation = _rotation + MathHelper.Pi;
@@ -65,7 +65,7 @@ public class Spider(bool isLocalPlayer) : IBinarySerializable
             if ((_position - _target).LengthSquared() >= _movementDistanceSquared)
             {
                 _movement = SpiderMovement.None;
-                _position = _home;
+                _position = Home;
                 _rotation = 0;
             }
         }
