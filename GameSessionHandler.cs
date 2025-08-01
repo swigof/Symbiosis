@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using Symbiosis.Entity;
 using Symbiosis.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Symbiosis;
 
@@ -42,6 +43,7 @@ public class GameSessionHandler : INetcodeSessionHandler
             _gameState.Spider = new Spider(localPlayer != null && localPlayer.Index == 0);
             _gameState.Frog = new Frog(localPlayer != null && localPlayer.Index == 1);
         }
+        _gameState.EggEnemyClusters = new List<EggEnemyCluster>();
 
         _localInput = new PlayerInputs();
     }
@@ -102,6 +104,10 @@ public class GameSessionHandler : INetcodeSessionHandler
             _remoteCursorPosition.X = inputs[0].Input.CursorPosition.X;
             _remoteCursorPosition.Y = inputs[0].Input.CursorPosition.Y;
         }
+        foreach (var cluster in _gameState.EggEnemyClusters)
+        {
+            cluster.Update();
+        }
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -110,6 +116,10 @@ public class GameSessionHandler : INetcodeSessionHandler
         _gameState.Spider.Draw(spriteBatch);
         if (!IsLocalCursorPlayer())
             spriteBatch.Draw(_cursorTexture, _remoteCursorPosition, null, QuarterTransparent);
+        foreach (var cluster in _gameState.EggEnemyClusters)
+        {
+            cluster.Draw(spriteBatch);
+        }
     }
 
     public bool IsLocalCursorPlayer() => _gameState.Spider.IsLocalPlayer;
@@ -142,6 +152,28 @@ public class GameSessionHandler : INetcodeSessionHandler
         reader.Read(_gameState.Spider);
         reader.Read(_gameState.Frog);
         reader.Read(_gameState.PreviousInputs);
+
+        int clusterCount = 0;
+        reader.Read(ref clusterCount);
+        int i = 0;
+        while (i < _gameState.EggEnemyClusters.Count && i < clusterCount)
+        {
+            reader.Read(_gameState.EggEnemyClusters[i]);
+            i++;
+        }
+        if (i < _gameState.EggEnemyClusters.Count)
+        {
+            _gameState.EggEnemyClusters.RemoveRange(i, _gameState.EggEnemyClusters.Count - i);
+        }
+        else if (i < clusterCount)
+        {
+            while (i < clusterCount)
+            {
+                EggEnemyCluster cluster = new EggEnemyCluster();
+                reader.Read(cluster);
+                _gameState.EggEnemyClusters.Add(cluster);
+            }
+        }
     }
 
     public void SaveState(in Frame frame, ref readonly BinaryBufferWriter writer)
@@ -150,6 +182,12 @@ public class GameSessionHandler : INetcodeSessionHandler
         writer.Write(_gameState.Spider);
         writer.Write(_gameState.Frog);
         writer.Write(_gameState.PreviousInputs);
+
+        writer.Write(_gameState.EggEnemyClusters.Count);
+        foreach (var cluster in _gameState.EggEnemyClusters)
+        {
+            writer.Write(cluster);
+        }
     }
 
     public void TimeSync(FrameSpan framesAhead)
@@ -164,4 +202,5 @@ public struct GameState
     public Spider Spider;
     public Frog Frog;
     public PlayerInputs[] PreviousInputs;
+    public List<EggEnemyCluster> EggEnemyClusters;
 }
