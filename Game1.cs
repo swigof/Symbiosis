@@ -1,4 +1,5 @@
 ﻿using Backdash;
+using Backdash.Synchronizing.Random;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,6 +11,7 @@ namespace Symbiosis;
 public class Game1 : Game
 {
     public static ContentManager GameContent;
+    public static INetcodeRandom Random;
 
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -24,6 +26,7 @@ public class Game1 : Game
         IsMouseVisible = false;
         _session = netcodeSession;
         GameContent = Content;
+        Random = _session.Random;
     }
 
     protected override void Initialize()
