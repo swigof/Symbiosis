@@ -28,7 +28,7 @@ public class Spider(bool isLocalPlayer) : IBinarySerializable
     public bool IsLocalPlayer = isLocalPlayer;
     public Circle BoundingCircle { get => new Circle { Center = _position, Radius = _radius }; }
 
-    const int _radius = 12;
+    const int _radius = 24;
     static readonly Vector2 _home = new Vector2(400, 200);
     static readonly Vector2 _spriteCenter = new Vector2(16, 16);
 
@@ -80,7 +80,7 @@ public class Spider(bool isLocalPlayer) : IBinarySerializable
             Color.White,
             _rotation,
             _spriteCenter,
-            1,
+            2,
             SpriteEffects.None,
             0
         );
