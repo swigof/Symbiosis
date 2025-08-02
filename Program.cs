@@ -13,18 +13,18 @@ var mode = Console.ReadLine().ToUpper();
 if (mode.StartsWith("C") || mode.StartsWith("R")) 
 {
     var port = 34345;
-    var remoteAddress = "";
+    Console.Write("Remote IP to connect to: ");
+    var ip = Console.ReadLine();
+    if (ip == "")
+        ip = "127.0.0.1";
+    var remoteAddress = ip + ":" + port.ToString();
+
     if (mode.StartsWith("C"))
     {
         Console.Write("Port to use: ");
         port = Convert.ToInt32(Console.ReadLine());
-        Console.Write("Remote IP and port to connect to: ");
-        remoteAddress = Console.ReadLine();
-    }
-    else
-    {
-        Console.Write("Remote IP to connect to: ");
-        remoteAddress = Console.ReadLine() + ":" + port.ToString();
+        Console.Write("Remote port to connect to: ");
+        remoteAddress = ip + ":" + Console.ReadLine();
     }
 
     Console.Write("Connect as player 1 or 2: ");
