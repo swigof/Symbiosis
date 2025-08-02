@@ -180,25 +180,25 @@ public class Frog(bool isLocalPlayer) : IBinarySerializable
 
     public void Deserialize(ref readonly BinaryBufferReader reader)
     {
-        byte _hopDirectionByte = 0;
+        byte hopDirectionByte = 0;
 
         reader.Read(ref _position);
-        reader.Read(ref _hopDirectionByte);
+        reader.Read(ref hopDirectionByte);
         reader.Read(ref _hopFrame);
         reader.Read(ref _hopCooldown);
         reader.Read(ref _tonguing);
         reader.Read(ref _tongueFrame);
         reader.Read(ref _facingDirection);
 
-        _hopDirection = (HopDirection)_hopDirectionByte;
+        _hopDirection = (HopDirection)hopDirectionByte;
     }
 
     public void Serialize(ref readonly BinaryBufferWriter writer)
     {
-        byte _hopDirectionByte = (byte)_hopDirection;
+        byte hopDirectionByte = (byte)_hopDirection;
 
         writer.Write(in _position);
-        writer.Write(in _hopDirectionByte);
+        writer.Write(in hopDirectionByte);
         writer.Write(in _hopFrame);
         writer.Write(in _hopCooldown);
         writer.Write(in _tonguing);

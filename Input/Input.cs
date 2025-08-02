@@ -25,24 +25,25 @@ public record struct CursorPosition
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public record struct PlayerInputs : IBinarySerializable
 {
-    private ushort _digitalInputs;
-    public DigitalInputs DigitalInputs
-    {
-        get => (DigitalInputs)_digitalInputs;
-        set => _digitalInputs = (ushort)value;
-    }
+    public DigitalInputs DigitalInputs;
     public CursorPosition CursorPosition;
 
     public void Deserialize(ref readonly BinaryBufferReader reader)
     {
-        reader.Read(ref _digitalInputs);
+        byte digitalInputsByte = 0;
+
+        reader.Read(ref digitalInputsByte);
         reader.Read(ref CursorPosition.X);
         reader.Read(ref CursorPosition.Y);
+
+        DigitalInputs = (DigitalInputs)digitalInputsByte;
     }
 
     public void Serialize(ref readonly BinaryBufferWriter writer)
     {
-        writer.Write(in _digitalInputs);
+        byte digitalInputsByte = (byte)DigitalInputs;
+
+        writer.Write(in digitalInputsByte);
         writer.Write(in CursorPosition.X);
         writer.Write(in CursorPosition.Y);
     }
