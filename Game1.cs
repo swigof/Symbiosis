@@ -12,8 +12,8 @@ public class Game1 : Game
 {
     public static ContentManager GameContent;
     public static INetcodeRandom Random;
+    public static GraphicsDeviceManager Graphics;
 
-    private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
     private INetcodeSession<PlayerInputs> _session;
@@ -21,7 +21,7 @@ public class Game1 : Game
 
     public Game1(INetcodeSession<PlayerInputs> netcodeSession)
     {
-        _graphics = new GraphicsDeviceManager(this);
+        Graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content/Assets";
         IsMouseVisible = false;
         _session = netcodeSession;
@@ -61,7 +61,7 @@ public class Game1 : Game
         if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        _sessionHandler.Update(gameTime);
+        _sessionHandler.Update(gameTime, IsActive);
 
         base.Update(gameTime);
     }

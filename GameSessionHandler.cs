@@ -48,7 +48,7 @@ public class GameSessionHandler : INetcodeSessionHandler
         _localInput = new PlayerInputs();
     }
 
-    public void Update(GameTime gameTime)
+    public void Update(GameTime gameTime, bool isActive)
     {
         if (_sleepTime > TimeSpan.Zero)
         {
@@ -60,20 +60,27 @@ public class GameSessionHandler : INetcodeSessionHandler
 
         _localInput.DigitalInputs = DigitalInputs.None;
 
-        if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            _localInput.DigitalInputs |= DigitalInputs.Up;
-        if (Keyboard.GetState().IsKeyDown(Keys.Down))
-            _localInput.DigitalInputs |= DigitalInputs.Down;
-        if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            _localInput.DigitalInputs |= DigitalInputs.Left;
-        if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            _localInput.DigitalInputs |= DigitalInputs.Right;
-        if (Keyboard.GetState().IsKeyDown(Keys.Space))
-            _localInput.DigitalInputs |= DigitalInputs.Action;
-        if (Mouse.GetState().LeftButton == ButtonState.Pressed)
-            _localInput.DigitalInputs |= DigitalInputs.Click;
-        _localInput.CursorPosition.X = Mouse.GetState().X;
-        _localInput.CursorPosition.Y = Mouse.GetState().Y;
+        if (isActive)
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                _localInput.DigitalInputs |= DigitalInputs.Up;
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                _localInput.DigitalInputs |= DigitalInputs.Down;
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                _localInput.DigitalInputs |= DigitalInputs.Left;
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                _localInput.DigitalInputs |= DigitalInputs.Right;
+            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+                _localInput.DigitalInputs |= DigitalInputs.Action;
+            var mouseState = Mouse.GetState();
+            if (Game1.Graphics.GraphicsDevice.Viewport.Bounds.Contains(mouseState.Position))
+            {
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                    _localInput.DigitalInputs |= DigitalInputs.Click;
+                _localInput.CursorPosition.X = mouseState.X;
+                _localInput.CursorPosition.Y = mouseState.Y;
+            }
+        }
 
         foreach (var player in _session.GetPlayers())
         {
