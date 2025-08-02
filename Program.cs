@@ -7,7 +7,7 @@ using System.Net;
 var inputSerializer = new StructBinarySerializer<PlayerInputs>();
 var sessionBuilder = RollbackNetcode.WithInputType(t => t.Custom(inputSerializer));
 
-Console.Write("(L)ocal, (R)emote, or (C)ustom: ");
+Console.Write("(L)ocal, (R)emote, (C)ustom, or (T)esting: ");
 var mode = Console.ReadLine().ToUpper();
 
 if (mode.StartsWith("C") || mode.StartsWith("R")) 
@@ -43,6 +43,11 @@ if (mode.StartsWith("C") || mode.StartsWith("R"))
         .WithPort(port)
         .WithPlayers(players)
         .ForRemote();
+}
+else if(mode.StartsWith("T"))
+{
+    sessionBuilder
+        .ForSyncTest();
 }
 else
 {
