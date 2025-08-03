@@ -10,7 +10,7 @@ internal struct EggEnemy
     public Vector2 RelativePosition;
 }
 
-public class EggEnemyCluster : IBinarySerializable
+public struct EggEnemyCluster : IBinarySerializable
 {
     // Game state
     Vector2 _position = new Vector2(0, 0);

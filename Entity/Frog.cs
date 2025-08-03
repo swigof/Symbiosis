@@ -16,7 +16,7 @@ internal enum HopDirection : byte
     Backward
 }
 
-public class Frog(bool isLocalPlayer) : IBinarySerializable
+public struct Frog(bool isLocalPlayer) : IBinarySerializable
 {
     // Game State
     Vector2 _position = new Vector2(200, 200);
@@ -27,8 +27,6 @@ public class Frog(bool isLocalPlayer) : IBinarySerializable
     bool _tonguing = false;
     byte _tongueFrame = 0;
 
-    Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("frog");
-    Texture2D _tongueSegmentTexture = Game1.GameContent.Load<Texture2D>("8pxcircle");
     public bool IsLocalPlayer = isLocalPlayer;
     public int _tongueSegmentCount = 0;
     public Circle BoundingCircle { get => new Circle { Center = _position, Radius = _radius }; }
@@ -42,6 +40,8 @@ public class Frog(bool isLocalPlayer) : IBinarySerializable
     const int _radius = 12;
     static readonly Vector2 _spriteCenter = new Vector2(16, 16);
     static readonly Vector2 _tongueSpriteCenter = new Vector2(4, 4);
+    static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("frog");
+    static readonly Texture2D _tongueSegmentTexture = Game1.GameContent.Load<Texture2D>("8pxcircle");
 
     public void Update(PlayerInputs inputs)
     {

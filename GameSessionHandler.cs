@@ -116,12 +116,12 @@ public class GameSessionHandler : INetcodeSessionHandler
 
     public void LoadState(in Frame frame, ref readonly BinaryBufferReader reader)
     {
-        reader.Read(GameState);
+        reader.Read(ref GameState);
     }
 
     public void SaveState(in Frame frame, ref readonly BinaryBufferWriter writer)
     {
-        writer.Write(GameState);
+        writer.Write(ref GameState);
     }
 
     public void TimeSync(FrameSpan framesAhead)

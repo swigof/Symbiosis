@@ -14,14 +14,13 @@ internal enum SpiderMovement : byte
     Returning
 }
 
-public class Spider(bool isLocalPlayer) : IBinarySerializable
+public struct Spider(bool isLocalPlayer) : IBinarySerializable
 {
     // Game State
     Vector2 _position = Home;
     SpiderMovement _movement = SpiderMovement.None;
     Vector2 _target = Vector2.Zero;
 
-    Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("spider");
     float _rotation = 0;
     Vector2 _direction = Vector2.Zero;
     float _movementDistanceSquared = 0;
@@ -31,6 +30,7 @@ public class Spider(bool isLocalPlayer) : IBinarySerializable
     const int _radius = 24;
     static readonly Vector2 _spriteCenter = new Vector2(16, 16);
     public static readonly Vector2 Home = new Vector2(400, 200);
+    static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("spider");
 
     public void Update(PlayerInputs inputs)
     {
