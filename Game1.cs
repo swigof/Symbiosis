@@ -36,7 +36,7 @@ public class Game1 : Game
         _sessionHandler = new GameSessionHandler(_session);
         _session.SetHandler(_sessionHandler);
 
-        if (_sessionHandler.IsLocalCursorPlayer())
+        if (_sessionHandler.GameState.IsLocalCursorPlayer())
             IsMouseVisible = true;
         else
             IsMouseVisible = false;
