@@ -61,7 +61,9 @@ public class Game1 : Game
         if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        _sessionHandler.Update(gameTime, IsActive);
+        InputManager.Instance.UpdateLocalInput(IsActive);
+
+        _sessionHandler.Update(gameTime);
 
         base.Update(gameTime);
     }

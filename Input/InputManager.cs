@@ -1,0 +1,64 @@
+﻿using Microsoft.Xna.Framework.Input;
+using System;
+using System.Threading;
+
+namespace Symbiosis.Input;
+
+public class InputManager
+{
+    public static InputManager Instance { get { return lazy.Value; } }
+    private static readonly Lazy<InputManager> lazy = new Lazy<InputManager>(() => new InputManager());
+    private InputManager() { }
+
+    private PlayerInputs _localInput = new PlayerInputs();
+    private Mutex _localInputMutex = new Mutex();
+    
+    public PlayerInputs GetLocalInput()
+    {
+        _localInputMutex.WaitOne();
+        try
+        {
+            return _localInput;
+        }
+        finally
+        {
+            _localInputMutex.ReleaseMutex();
+        }
+    } 
+    
+    // Needs to be called on the main thread to see inputs
+    public void UpdateLocalInput(bool isActive)
+    {
+        _localInputMutex.WaitOne();
+        try
+        {
+            _localInput.DigitalInputs = DigitalInputs.None;
+
+            if (isActive)
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                    _localInput.DigitalInputs |= DigitalInputs.Up;
+                if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                    _localInput.DigitalInputs |= DigitalInputs.Down;
+                if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                    _localInput.DigitalInputs |= DigitalInputs.Left;
+                if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                    _localInput.DigitalInputs |= DigitalInputs.Right;
+                if (Keyboard.GetState().IsKeyDown(Keys.Space))
+                    _localInput.DigitalInputs |= DigitalInputs.Action;
+                var mouseState = Mouse.GetState();
+                if (Game1.Graphics.GraphicsDevice.Viewport.Bounds.Contains(mouseState.Position))
+                {
+                    if (mouseState.LeftButton == ButtonState.Pressed)
+                        _localInput.DigitalInputs |= DigitalInputs.Click;
+                    _localInput.CursorPosition.X = mouseState.X;
+                    _localInput.CursorPosition.Y = mouseState.Y;
+                }
+            }
+        }
+        finally
+        {
+            _localInputMutex.ReleaseMutex();
+        }
+    }
+}

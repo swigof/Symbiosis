@@ -28,7 +28,7 @@ public class GameSessionHandler : INetcodeSessionHandler
         GameState = new SessionGameState(_session.IsLocal(), localPlayer.Index);
     }
 
-    public void Update(GameTime gameTime, bool isActive)
+    public void Update(GameTime gameTime)
     {
         if (_sleepTime > TimeSpan.Zero)
         {
@@ -38,29 +38,7 @@ public class GameSessionHandler : INetcodeSessionHandler
 
         _session.BeginFrame();
 
-        _localInput.DigitalInputs = DigitalInputs.None;
-
-        if (isActive)
-        {
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                _localInput.DigitalInputs |= DigitalInputs.Up;
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                _localInput.DigitalInputs |= DigitalInputs.Down;
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                _localInput.DigitalInputs |= DigitalInputs.Left;
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                _localInput.DigitalInputs |= DigitalInputs.Right;
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
-                _localInput.DigitalInputs |= DigitalInputs.Action;
-            var mouseState = Mouse.GetState();
-            if (Game1.Graphics.GraphicsDevice.Viewport.Bounds.Contains(mouseState.Position))
-            {
-                if (mouseState.LeftButton == ButtonState.Pressed)
-                    _localInput.DigitalInputs |= DigitalInputs.Click;
-                _localInput.CursorPosition.X = mouseState.X;
-                _localInput.CursorPosition.Y = mouseState.Y;
-            }
-        }
+        _localInput = InputManager.Instance.GetLocalInput();
 
         foreach (var player in _session.GetPlayers())
         {
