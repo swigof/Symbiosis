@@ -2,13 +2,13 @@
 using Backdash.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Symbiosis.Input;
 using System;
+using System.Diagnostics;
 
 namespace Symbiosis;
 
-public class GameSessionHandler : INetcodeSessionHandler
+public class GameSessionHandler : INetcodeSessionHandler, IDisposable
 {
     readonly static Color QuarterTransparent = new Color(255, 255, 255, 255 / 4);
 
@@ -18,7 +18,9 @@ public class GameSessionHandler : INetcodeSessionHandler
     TimeSpan _sleepTime = new TimeSpan();
     PlayerInputs _localInput = new PlayerInputs();
     Vector2 _remoteCursorPosition = Vector2.Zero;
-    Texture2D _cursorTexture = Game1.GameContent.Load<Texture2D>("cursor_none");
+    bool _running = true;
+
+    static readonly Texture2D _cursorTexture = Game1.GameContent.Load<Texture2D>("cursor_none");
 
     public GameSessionHandler(INetcodeSession<PlayerInputs> session)
     {
@@ -28,11 +30,46 @@ public class GameSessionHandler : INetcodeSessionHandler
         GameState = new SessionGameState(_session.IsLocal(), localPlayer.Index);
     }
 
-    public void Update(GameTime gameTime)
+    public void Dispose()
+    {
+        _running = false;
+    }
+
+    public void Run()
+    {
+        TimeSpan accumulatedTime = TimeSpan.Zero;
+        long previousTicks = 0;
+        TimeSpan frameTime = FrameTime.Step;
+        Stopwatch timer = new Stopwatch();
+        timer.Start();
+        while (_running)
+        {
+            var currentTicks = timer.Elapsed.Ticks;
+            accumulatedTime += TimeSpan.FromTicks(currentTicks - previousTicks);
+            previousTicks = currentTicks;
+
+            if (accumulatedTime < frameTime)
+            {
+                var sleepTime = (frameTime - accumulatedTime).TotalMilliseconds;
+                if (sleepTime >= 2.0)
+                    System.Threading.Thread.Sleep(1);
+            }
+            else
+            {
+                while (accumulatedTime >= frameTime)
+                {
+                    accumulatedTime -= frameTime;
+                    Update(frameTime);
+                }
+            }
+        }
+    }
+
+    public void Update(TimeSpan elapsedTime)
     {
         if (_sleepTime > TimeSpan.Zero)
         {
-            _sleepTime -= gameTime.ElapsedGameTime;
+            _sleepTime -= elapsedTime;
             return;
         }
 

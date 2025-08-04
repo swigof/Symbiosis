@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Symbiosis.Input;
+using System.Threading;
 
 namespace Symbiosis;
 
@@ -18,6 +19,7 @@ public class Game1 : Game
 
     private INetcodeSession<PlayerInputs> _session;
     private GameSessionHandler _sessionHandler;
+    private Thread _sessionThread;
 
     public Game1(INetcodeSession<PlayerInputs> netcodeSession)
     {
@@ -32,18 +34,24 @@ public class Game1 : Game
     protected override void Initialize()
     {
         base.Initialize();
-        _session.Start();
         _sessionHandler = new GameSessionHandler(_session);
-        _session.SetHandler(_sessionHandler);
-
         if (_sessionHandler.GameState.IsLocalCursorPlayer())
             IsMouseVisible = true;
         else
             IsMouseVisible = false;
+
+        _sessionThread = new Thread(() => 
+        {
+            _session.Start();
+            _session.SetHandler(_sessionHandler);
+            _sessionHandler.Run();
+        });
+        _sessionThread.Start();
     }
 
     protected override void Dispose(bool disposing)
     {
+        _sessionHandler.Dispose();
         _session.Dispose();
         base.Dispose(disposing);
     }
@@ -62,8 +70,6 @@ public class Game1 : Game
             Exit();
 
         InputManager.Instance.UpdateLocalInput(IsActive);
-
-        _sessionHandler.Update(gameTime);
 
         base.Update(gameTime);
     }
