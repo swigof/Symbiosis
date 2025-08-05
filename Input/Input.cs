@@ -16,14 +16,14 @@ public enum DigitalInputs : ushort
     Click = 1 << 5
 }
 
-public record struct CursorPosition
+public struct CursorPosition
 {
     public int X;
     public int Y;
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public record struct PlayerInputs : IBinarySerializable
+public struct PlayerInputs : IBinarySerializable
 {
     public DigitalInputs DigitalInputs;
     public CursorPosition CursorPosition;
