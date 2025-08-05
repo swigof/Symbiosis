@@ -6,7 +6,7 @@ using Symbiosis.Input;
 using System;
 using System.Threading;
 
-namespace Symbiosis;
+namespace Symbiosis.Session;
 
 // Provides thread protected game state access
 public struct SessionGameState

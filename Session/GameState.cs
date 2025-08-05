@@ -2,7 +2,7 @@
 using Symbiosis.Entity;
 using Symbiosis.Input;
 
-namespace Symbiosis;
+namespace Symbiosis.Session;
 
 public struct GameState : IBinarySerializable
 {

@@ -6,7 +6,7 @@ using Symbiosis.Input;
 using System;
 using System.Diagnostics;
 
-namespace Symbiosis;
+namespace Symbiosis.Session;
 
 public class GameSessionHandler : INetcodeSessionHandler, IDisposable
 {

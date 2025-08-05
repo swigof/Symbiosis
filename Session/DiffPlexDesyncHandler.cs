@@ -4,7 +4,7 @@ using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
 using System;
 
-namespace Symbiosis;
+namespace Symbiosis.Session;
 
 /// <summary>
 /// This prints the text diff of a state when a desync happens over a SyncTest session.
