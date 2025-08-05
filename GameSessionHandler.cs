@@ -12,7 +12,7 @@ public class GameSessionHandler : INetcodeSessionHandler, IDisposable
 {
     readonly static Color QuarterTransparent = new Color(255, 255, 255, 255 / 4);
 
-    public SessionGameState GameState;
+    public SessionGameState SessionGameState;
 
     INetcodeSession<PlayerInputs> _session;
     TimeSpan _sleepTime = new TimeSpan();
@@ -27,7 +27,7 @@ public class GameSessionHandler : INetcodeSessionHandler, IDisposable
         _session = session;
         NetcodePlayer localPlayer;
         _session.TryGetLocalPlayer(out localPlayer);
-        GameState = new SessionGameState(_session.IsLocal(), localPlayer.Index);
+        SessionGameState = new SessionGameState(_session.IsLocal(), localPlayer.Index);
     }
 
     public void Dispose()
@@ -90,27 +90,27 @@ public class GameSessionHandler : INetcodeSessionHandler, IDisposable
             return;
 
         var inputs = _session.CurrentSynchronizedInputs;
-        if (!GameState.IsLocalCursorPlayer())
+        if (!SessionGameState.IsLocalCursorPlayer())
         {
             _remoteCursorPosition.X = inputs[0].Input.CursorPosition.X;
             _remoteCursorPosition.Y = inputs[0].Input.CursorPosition.Y;
         }
-        GameState.Update(inputs);
+        SessionGameState.Update(inputs);
 
         _session.AdvanceFrame();
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        if (!GameState.IsLocalCursorPlayer())
+        if (!SessionGameState.IsLocalCursorPlayer())
             spriteBatch.Draw(_cursorTexture, _remoteCursorPosition, null, QuarterTransparent);
-        GameState.Draw(spriteBatch);
+        SessionGameState.Draw(spriteBatch);
     }
 
     public void AdvanceFrame()
     {
         _session.SynchronizeInputs();
-        GameState.Update(_session.CurrentSynchronizedInputs);
+        SessionGameState.Update(_session.CurrentSynchronizedInputs);
         _session.AdvanceFrame(); 
     }
 
@@ -131,18 +131,19 @@ public class GameSessionHandler : INetcodeSessionHandler, IDisposable
 
     public void LoadState(in Frame frame, ref readonly BinaryBufferReader reader)
     {
-        GameState.LoadState(in reader);
+        SessionGameState.LoadState(in reader);
     }
 
     public void SaveState(in Frame frame, ref readonly BinaryBufferWriter writer)
     {
-        GameState.SaveState(in writer);
+        SessionGameState.SaveState(in writer);
     }
 
     public void TimeSync(FrameSpan framesAhead)
     {
         _sleepTime = framesAhead.Duration();
     }
+
     object INetcodeSessionHandler.CreateState(in Frame frame, ref readonly BinaryBufferReader reader)
     {
         GameState state = new GameState();
