@@ -41,7 +41,7 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
             {
                 Movement = SpiderMovement.Going;
                 Target = new Vector2(inputs.CursorPosition.X, inputs.CursorPosition.Y);
-                var movementVector = Target - Position;
+                var movementVector = Target - Home;
                 _movementDistanceSquared = movementVector.LengthSquared();
                 _direction = Vector2.Normalize(movementVector);
                 _rotation = (float)Math.Atan2(_direction.X, -_direction.Y);
@@ -96,9 +96,16 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
         reader.Read(ref Target);
 
         Movement = (SpiderMovement)movementByte;
-        var movementVector = Target - Position;
+        var movementVector = Target - Home;
         _movementDistanceSquared = movementVector.LengthSquared();
         _direction = Vector2.Normalize(movementVector);
+        _rotation = 0;
+        if (Movement != SpiderMovement.None)
+        {
+            _rotation = (float)Math.Atan2(_direction.X, -_direction.Y);
+            if (Movement == SpiderMovement.Returning)
+                _rotation = _rotation + MathHelper.Pi;
+        }
     }
 
     public void Serialize(ref readonly BinaryBufferWriter writer)
