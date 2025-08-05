@@ -7,7 +7,7 @@ using static Symbiosis.Collision;
 
 namespace Symbiosis.Entity;
 
-internal enum SpiderMovement : byte
+public enum SpiderMovement : byte
 {
     None,
     Going,
@@ -17,15 +17,15 @@ internal enum SpiderMovement : byte
 public struct Spider(bool isLocalPlayer) : IBinarySerializable
 {
     // Game State
-    Vector2 _position = Home;
-    SpiderMovement _movement = SpiderMovement.None;
-    Vector2 _target = Vector2.Zero;
+    public Vector2 Position = Home;
+    public SpiderMovement Movement = SpiderMovement.None;
+    public Vector2 Target = Vector2.Zero;
 
     float _rotation = 0;
     Vector2 _direction = Vector2.Zero;
     float _movementDistanceSquared = 0;
     public bool IsLocalPlayer = isLocalPlayer;
-    public Circle BoundingCircle { get => new Circle { Center = _position, Radius = _radius }; }
+    public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
 
     const int _radius = 24;
     static readonly Vector2 _spriteCenter = new Vector2(16, 16);
@@ -34,38 +34,38 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
 
     public void Update(PlayerInputs inputs)
     {
-        if (_movement == SpiderMovement.None)
+        if (Movement == SpiderMovement.None)
         {
             if (inputs.DigitalInputs.HasFlag(DigitalInputs.Click))
             {
-                _movement = SpiderMovement.Going;
-                _target = new Vector2(inputs.CursorPosition.X, inputs.CursorPosition.Y);
-                var movementVector = _target - _position;
+                Movement = SpiderMovement.Going;
+                Target = new Vector2(inputs.CursorPosition.X, inputs.CursorPosition.Y);
+                var movementVector = Target - Position;
                 _movementDistanceSquared = movementVector.LengthSquared();
                 _direction = Vector2.Normalize(movementVector);
                 _rotation = (float)Math.Atan2(_direction.X, -_direction.Y);
             }
         }
 
-        if (_movement == SpiderMovement.Going)
+        if (Movement == SpiderMovement.Going)
         {
-            _position += _direction * 4;
+            Position += _direction * 4;
 
-            if ((_position - Home).LengthSquared() >= _movementDistanceSquared)
+            if ((Position - Home).LengthSquared() >= _movementDistanceSquared)
             {
-                _position = _target;
+                Position = Target;
                 _rotation = _rotation + MathHelper.Pi;
-                _movement = SpiderMovement.Returning;
+                Movement = SpiderMovement.Returning;
             }
         }
-        else if (_movement == SpiderMovement.Returning)
+        else if (Movement == SpiderMovement.Returning)
         {
-            _position -= _direction * 4;
+            Position -= _direction * 4;
 
-            if ((_position - _target).LengthSquared() >= _movementDistanceSquared)
+            if ((Position - Target).LengthSquared() >= _movementDistanceSquared)
             {
-                _movement = SpiderMovement.None;
-                _position = Home;
+                Movement = SpiderMovement.None;
+                Position = Home;
                 _rotation = 0;
             }
         }
@@ -75,7 +75,7 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
     {
         spriteBatch.Draw(
             _idleTexture,
-            _position,
+            Position,
             null,
             Color.White,
             _rotation,
@@ -90,22 +90,22 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
     {
         byte movementByte = 0;
 
-        reader.Read(ref _position);
+        reader.Read(ref Position);
         reader.Read(ref movementByte);
-        reader.Read(ref _target);
+        reader.Read(ref Target);
 
-        _movement = (SpiderMovement)movementByte;
-        var movementVector = _target - _position;
+        Movement = (SpiderMovement)movementByte;
+        var movementVector = Target - Position;
         _movementDistanceSquared = movementVector.LengthSquared();
         _direction = Vector2.Normalize(movementVector);
     }
 
     public void Serialize(ref readonly BinaryBufferWriter writer)
     {
-        byte movementByte = (byte)_movement;
+        byte movementByte = (byte)Movement;
 
-        writer.Write(in _position);
+        writer.Write(in Position);
         writer.Write(in movementByte);
-        writer.Write(in _target);
+        writer.Write(in Target);
     }
 }

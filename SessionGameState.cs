@@ -8,64 +8,40 @@ using System.Threading;
 
 namespace Symbiosis;
 
-public struct SessionGameState : IBinarySerializable
+// Provides thread protected game state access
+public struct SessionGameState
 {
-    int _frameNumber = 0;
-    PlayerInputs[] _previousInputs = new PlayerInputs[2];
-    Spider _spider;
-    Frog _frog;
-
+    GameState _gameState = new GameState();
     Mutex _stateMutex = new Mutex();
 
     public SessionGameState(bool isLocal, int firstLocalPlayerIndex)
     {
         if (isLocal)
         {
-            _spider = new Spider(true);
-            _frog = new Frog(true);
+            _gameState.Spider = new Spider(true);
+            _gameState.Frog = new Frog(true);
         }
         else
         {
             // Default player 1 to spider and 2 to frog for now
-            _spider = new Spider(firstLocalPlayerIndex == 0);
-            _frog = new Frog(firstLocalPlayerIndex == 1);
+            _gameState.Spider = new Spider(firstLocalPlayerIndex == 0);
+            _gameState.Frog = new Frog(firstLocalPlayerIndex == 1);
         }
-    }
-
-    private SessionGameState(SessionGameState toCopy)
-    {
-        _frameNumber = toCopy._frameNumber;
-        _spider = toCopy._spider;
-        _frog = toCopy._frog;
-        _previousInputs[0] = toCopy._previousInputs[0];
-        _previousInputs[1] = toCopy._previousInputs[1];
     }
 
     // Not thread protected. Not guaranteed to be state alligned. 
-    public bool IsLocalCursorPlayer() => _spider.IsLocalPlayer;
-
-    public SessionGameState GetCopy() {
-        _stateMutex.WaitOne();
-        try
-        {
-            return new SessionGameState(this);
-        }
-        finally
-        {
-            _stateMutex.ReleaseMutex();
-        }
-    }
+    public bool IsLocalCursorPlayer() => _gameState.Spider.IsLocalPlayer;
 
     public void Update(ReadOnlySpan<SynchronizedInput<PlayerInputs>> inputs)
     {
         _stateMutex.WaitOne();
         try
         {
-            _frameNumber++;
-            _spider.Update(inputs[0].Input);
-            _frog.Update(inputs[1].Input);
-            _previousInputs[0] = inputs[0];
-            _previousInputs[1] = inputs[1];
+            _gameState.FrameNumber++;
+            _gameState.Spider.Update(inputs[0].Input);
+            _gameState.Frog.Update(inputs[1].Input);
+            _gameState.PreviousInputs[0] = inputs[0];
+            _gameState.PreviousInputs[1] = inputs[1];
         }
         finally 
         {
@@ -78,8 +54,8 @@ public struct SessionGameState : IBinarySerializable
         _stateMutex.WaitOne();
         try
         {
-            _frog.Draw(spriteBatch);
-            _spider.Draw(spriteBatch);
+            _gameState.Frog.Draw(spriteBatch);
+            _gameState.Spider.Draw(spriteBatch);
         }
         finally
         {
@@ -87,33 +63,25 @@ public struct SessionGameState : IBinarySerializable
         }
     }
 
-    public void Deserialize(ref readonly BinaryBufferReader reader)
+    public void LoadState(ref readonly BinaryBufferReader reader)
     {
         _stateMutex.WaitOne();
         try
         {
-            reader.Read(ref _frameNumber);
-            reader.Read(ref _spider);
-            reader.Read(ref _frog);
-            reader.Read(ref _previousInputs[0]);
-            reader.Read(ref _previousInputs[1]);
+            reader.Read(ref _gameState);
         }
         finally
-        { 
-            _stateMutex.ReleaseMutex(); 
+        {
+            _stateMutex.ReleaseMutex();
         }
     }
 
-    public void Serialize(ref readonly BinaryBufferWriter writer)
+    public void SaveState(ref readonly BinaryBufferWriter writer)
     {
         _stateMutex.WaitOne();
         try
         {
-            writer.Write(in _frameNumber);
-            writer.Write(in _spider);
-            writer.Write(in _frog);
-            writer.Write(in _previousInputs[0]);
-            writer.Write(in _previousInputs[1]);
+            writer.Write(in _gameState);
         }
         finally
         {
