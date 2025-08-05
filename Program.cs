@@ -49,6 +49,7 @@ else if(mode.StartsWith("T"))
     sessionBuilder
         .ForSyncTest(options => options
             .UseJsonStateParser()
+            .UseDesyncHandler<DiffPlexDesyncHandler>()
         );
 }
 else
