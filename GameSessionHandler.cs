@@ -143,4 +143,10 @@ public class GameSessionHandler : INetcodeSessionHandler, IDisposable
     {
         _sleepTime = framesAhead.Duration();
     }
+    object INetcodeSessionHandler.CreateState(in Frame frame, ref readonly BinaryBufferReader reader)
+    {
+        GameState state = new GameState();
+        state.Deserialize(in reader);
+        return state;
+    }
 }

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Symbiosis.Input;
 using System;
+using System.Text.Json.Serialization;
 using static Symbiosis.Collision;
 
 namespace Symbiosis.Entity;
@@ -28,8 +29,8 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
     public byte TongueFrame = 0;
 
     int _tongueSegmentCount = 0;
-    public bool IsLocalPlayer = isLocalPlayer;
-    public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
+    [JsonIgnore] public bool IsLocalPlayer = isLocalPlayer;
+    [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
 
     const int _hopFrameLength = 10;
     const int _hopDelay = 15;

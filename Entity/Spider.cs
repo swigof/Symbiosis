@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Symbiosis.Input;
 using System;
+using System.Text.Json.Serialization;
 using static Symbiosis.Collision;
 
 namespace Symbiosis.Entity;
@@ -24,8 +25,8 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
     float _rotation = 0;
     Vector2 _direction = Vector2.Zero;
     float _movementDistanceSquared = 0;
-    public bool IsLocalPlayer = isLocalPlayer;
-    public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
+    [JsonIgnore] public bool IsLocalPlayer = isLocalPlayer;
+    [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
 
     const int _radius = 24;
     static readonly Vector2 _spriteCenter = new Vector2(16, 16);

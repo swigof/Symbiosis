@@ -47,7 +47,9 @@ if (mode.StartsWith("C") || mode.StartsWith("R"))
 else if(mode.StartsWith("T"))
 {
     sessionBuilder
-        .ForSyncTest();
+        .ForSyncTest(options => options
+            .UseJsonStateParser()
+        );
 }
 else
 {
