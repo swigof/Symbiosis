@@ -47,12 +47,13 @@ public class InputManager
                 if (Keyboard.GetState().IsKeyDown(Keys.Space))
                     _localInput.DigitalInputs |= DigitalInputs.Action;
                 var mouseState = Mouse.GetState();
-                if (Game1.Graphics.GraphicsDevice.Viewport.Bounds.Contains(mouseState.Position))
+                var viewport = Game1.Graphics.GraphicsDevice.Viewport;
+                if (viewport.Bounds.Contains(mouseState.Position))
                 {
                     if (mouseState.LeftButton == ButtonState.Pressed)
                         _localInput.DigitalInputs |= DigitalInputs.Click;
-                    _localInput.CursorPosition.X = mouseState.X;
-                    _localInput.CursorPosition.Y = mouseState.Y;
+                    _localInput.CursorPosition.X = (int)((mouseState.X - viewport.X) * (1 / Game1.ScreenScale));
+                    _localInput.CursorPosition.Y = (int)((mouseState.Y - viewport.Y) * (1 / Game1.ScreenScale));
                 }
             }
         }
