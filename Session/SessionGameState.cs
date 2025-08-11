@@ -42,6 +42,11 @@ public struct SessionGameState
             _gameState.Frog.Update(inputs[1].Input);
             _gameState.PreviousInputs[0] = inputs[0];
             _gameState.PreviousInputs[1] = inputs[1];
+            for (var i = 0; i < _gameState.Clusters.Length; i++)
+            {
+                if(_gameState.Clusters[i].Active)
+                    _gameState.Clusters[i].Update();
+            }
         }
         finally 
         {
@@ -56,6 +61,11 @@ public struct SessionGameState
         {
             _gameState.Frog.Draw(spriteBatch);
             _gameState.Spider.Draw(spriteBatch);
+            for (var i = 0; i < _gameState.Clusters.Length; i++)
+            {
+                if(_gameState.Clusters[i].Active)
+                    _gameState.Clusters[i].Draw(spriteBatch);
+            }
         }
         finally
         {

@@ -13,16 +13,21 @@ internal struct EggEnemy
 public struct EggEnemyCluster : IBinarySerializable
 {
     // Game state
-    Vector2 _position = new Vector2(0, 0);
+    Vector2 _position = Vector2.Zero;
     EggEnemy[] _eggEnemies = new EggEnemy[8];
+    public bool Active { get; private set; } = false;
 
     const int _radius = 8;
     const int _eggEnemyRadius = 2;
+    const int _speed = 1;
     static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("8pxcircle");
     static readonly Vector2 _spriteCenter = new Vector2(1, 1);
 
-    public EggEnemyCluster()
+    public EggEnemyCluster() { }
+
+    public void Init()
     {
+        Active = true;
         for (var i = 0; i < _eggEnemies.Length; i++)
         {
             _eggEnemies[i].Active = true;
@@ -33,18 +38,18 @@ public struct EggEnemyCluster : IBinarySerializable
 
     public void Update()
     {
-        _position += Vector2.Normalize(Spider.Home - _position) * 1;
+        _position += Vector2.Normalize(Spider.Home - _position) * _speed;
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        foreach (var eggEnemy in _eggEnemies)
+        for (var i = 0; i < _eggEnemies.Length; i++)
         {
-            if (eggEnemy.Active)
+            if (_eggEnemies[i].Active)
             {
                 spriteBatch.Draw(
                     _idleTexture,
-                    _position + eggEnemy.RelativePosition,
+                    _position + _eggEnemies[i].RelativePosition,
                     null,
                     Color.Red,
                     0,
