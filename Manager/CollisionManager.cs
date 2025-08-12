@@ -3,9 +3,10 @@ using Symbiosis.Session;
 
 namespace Symbiosis.Manager;
 
+// Should only be used with a safely locked gamestate
 public static class CollisionManager
 {
-    public static void Update(GameState gamestate)
+    public static void Update(ref GameState gamestate)
     {
         
     }

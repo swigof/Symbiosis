@@ -53,8 +53,8 @@ public struct SessionGameState
                 if(_gameState.FrogEnemies[i].Active)
                     _gameState.FrogEnemies[i].Update(_gameState.Frog.Position);
             }
-            SpawnManager.Update(_gameState);
-            CollisionManager.Update(_gameState);
+            SpawnManager.Update(ref _gameState);
+            CollisionManager.Update(ref _gameState);
         }
         finally 
         {
