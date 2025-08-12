@@ -25,10 +25,10 @@ public struct EggEnemyCluster : IBinarySerializable
 
     public EggEnemyCluster() { }
 
-    public void Init()
+    public void Init(Vector2 position)
     {
         Active = true;
-        Position = Vector2.Zero;
+        Position = position;
         for (var i = 0; i < EggEnemies.Length; i++)
         {
             EggEnemies[i].Active = true;

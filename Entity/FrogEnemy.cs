@@ -17,10 +17,10 @@ public struct FrogEnemy : IBinarySerializable
 
     public FrogEnemy() { }
 
-    public void Init()
+    public void Init(Vector2 position)
     {
         Active = true;
-        Position = Vector2.Zero;
+        Position = position;
     }
 
     public void Update(Vector2 frogPosition)
