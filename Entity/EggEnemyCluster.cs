@@ -28,6 +28,7 @@ public struct EggEnemyCluster : IBinarySerializable
     public void Init()
     {
         Active = true;
+        Position = Vector2.Zero;
         for (var i = 0; i < EggEnemies.Length; i++)
         {
             EggEnemies[i].Active = true;
@@ -65,6 +66,7 @@ public struct EggEnemyCluster : IBinarySerializable
     public void Deserialize(ref readonly BinaryBufferReader reader)
     {
         reader.Read(ref Position);
+        reader.Read(ref Active);
         for (var i = 0; i < EggEnemies.Length; i++)
         {
             reader.Read(ref EggEnemies[i].Active);
@@ -75,6 +77,7 @@ public struct EggEnemyCluster : IBinarySerializable
     public void Serialize(ref readonly BinaryBufferWriter writer)
     {
         writer.Write(in Position);
+        writer.Write(in Active);
         for (var i = 0; i < EggEnemies.Length; i++)
         {
             writer.Write(in EggEnemies[i].Active);
