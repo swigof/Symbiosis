@@ -20,7 +20,7 @@ public enum HopDirection : byte
 public struct Frog(bool isLocalPlayer) : IBinarySerializable
 {
     // Game State
-    public Vector2 Position = new Vector2(200, 200);
+    public Vector2 Position = new Vector2(Spider.Home.X, Spider.Home.Y - 50);
     public HopDirection HopDirection = HopDirection.None;
     public byte HopFrame = 0;
     public byte HopCooldown = 0;

@@ -28,10 +28,10 @@ public class Game1 : Game
     private GameSessionHandler _sessionHandler;
     private Thread _sessionThread;
 
-    private const int _resolutionWidth = 640;
-    private const int _resolutionHeight = 480;
-    private int _virtualResolutionWidth = _resolutionWidth;
-    private int _virtualResolutionHeight = _resolutionHeight;
+    public static readonly int ResolutionWidth = 640;
+    public static readonly int ResolutionHeight = 480;
+    private int _virtualResolutionWidth = ResolutionWidth;
+    private int _virtualResolutionHeight = ResolutionHeight;
     private Matrix _screenScaleMatrix = Matrix.CreateScale(ScreenScale);
 
     public Game1(INetcodeSession<PlayerInputs> netcodeSession)
@@ -55,8 +55,8 @@ public class Game1 : Game
     {
         base.Initialize();
         
-        Graphics.PreferredBackBufferWidth = _resolutionWidth;
-        Graphics.PreferredBackBufferHeight = _resolutionHeight;
+        Graphics.PreferredBackBufferWidth = ResolutionWidth;
+        Graphics.PreferredBackBufferHeight = ResolutionHeight;
         Graphics.ApplyChanges();
 
         UpdateScreenScaleMatrix();
@@ -117,20 +117,20 @@ public class Game1 : Game
         float screenWidth = GraphicsDevice.PresentationParameters.BackBufferWidth;
         float screenHeight = GraphicsDevice.PresentationParameters.BackBufferHeight;
 
-        if (screenWidth / _resolutionWidth > screenHeight / _resolutionHeight)
+        if (screenWidth / ResolutionWidth > screenHeight / ResolutionHeight)
         {
-            float aspect = screenHeight / _resolutionHeight;
-            _virtualResolutionWidth = (int)(aspect * _resolutionWidth);
+            float aspect = screenHeight / ResolutionHeight;
+            _virtualResolutionWidth = (int)(aspect * ResolutionWidth);
             _virtualResolutionHeight = (int)screenHeight;
         }
         else
         {
-            float aspect = screenWidth / _resolutionWidth;
+            float aspect = screenWidth / ResolutionWidth;
             _virtualResolutionWidth = (int)screenWidth;
-            _virtualResolutionHeight = (int)(aspect * _resolutionHeight);
+            _virtualResolutionHeight = (int)(aspect * ResolutionHeight);
         }
 
-        ScreenScale = _virtualResolutionWidth / (float)_resolutionWidth;
+        ScreenScale = _virtualResolutionWidth / (float)ResolutionWidth;
         _screenScaleMatrix = Matrix.CreateScale(ScreenScale);
 
         GraphicsDevice.Viewport = new Viewport

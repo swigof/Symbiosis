@@ -30,7 +30,7 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
 
     const int _radius = 24;
     static readonly Vector2 _spriteCenter = new Vector2(16, 16);
-    public static readonly Vector2 Home = new Vector2(400, 200);
+    public static readonly Vector2 Home = new Vector2(Game1.ResolutionWidth/2, Game1.ResolutionHeight/2);
     static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("spider");
 
     public void Update(PlayerInputs inputs)
