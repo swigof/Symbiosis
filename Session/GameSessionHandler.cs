@@ -20,7 +20,17 @@ public class GameSessionHandler : INetcodeSessionHandler, IDisposable
     Vector2 _remoteCursorPosition = Vector2.Zero;
     bool _running = true;
 
+    static readonly Rectangle _grassArea = new Rectangle(0, 0, Game1.ResolutionWidth, Game1.ResolutionHeight);
+    static readonly Rectangle[] _shrubAreas =
+    {
+        new Rectangle(0, 0, Game1.ResolutionWidth, 32),
+        new Rectangle(0, 0, 32, Game1.ResolutionHeight),
+        new Rectangle(Game1.ResolutionWidth - 32, 0, 32, Game1.ResolutionHeight),
+        new Rectangle(0, Game1.ResolutionHeight - 32, Game1.ResolutionWidth, 32)
+    };
     static readonly Texture2D _cursorTexture = Game1.GameContent.Load<Texture2D>("cursor_none");
+    static readonly Texture2D _grassTexture = Game1.GameContent.Load<Texture2D>("grass");
+    static readonly Texture2D _shrubsTexture = Game1.GameContent.Load<Texture2D>("shrub");
 
     public GameSessionHandler(INetcodeSession<PlayerInputs> session)
     {
@@ -102,7 +112,10 @@ public class GameSessionHandler : INetcodeSessionHandler, IDisposable
 
     public void Draw(SpriteBatch spriteBatch)
     {
+        spriteBatch.Draw(_grassTexture, _grassArea, _grassArea, Color.White);
         SessionGameState.Draw(spriteBatch);
+        for (int i = 0; i < _shrubAreas.Length; i++)
+            spriteBatch.Draw(_shrubsTexture, _shrubAreas[i], _shrubAreas[i], Color.White);
         if (!SessionGameState.IsLocalCursorPlayer())
             spriteBatch.Draw(_cursorTexture, _remoteCursorPosition, null, QuarterTransparent);
     }
