@@ -11,6 +11,26 @@ public static class SpawnManager
         
     }
 
+    private static int GetNextEggEnemyIndex(GameState gamestate)
+    {
+        for (var i = 0; i < gamestate.Clusters.Length; i++)
+        {
+            if (!gamestate.Clusters[i].Active)
+                return i;
+        }
+        return -1;
+    }
+
+    private static int GetNextFrogEnemyIndex(GameState gamestate)
+    {
+        for (var i = 0; i < gamestate.FrogEnemies.Length; i++)
+        {
+            if (!gamestate.FrogEnemies[i].Active)
+                return i;
+        }
+        return -1;
+    }
+
     private static Vector2 GetRandomPositionJustOutsideScreen()
     {
         const int padding = 16;
