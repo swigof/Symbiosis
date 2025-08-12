@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Symbiosis.Input;
 using System;
 using System.Text.Json.Serialization;
-using static Symbiosis.Collision;
+using static Symbiosis.Manager.CollisionManager;
 
 namespace Symbiosis.Entity;
 

@@ -1,9 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
+using Symbiosis.Session;
 
-namespace Symbiosis;
+namespace Symbiosis.Manager;
 
-public static class Collision
+public static class CollisionManager
 {
+    public static void Update(GameState gamestate)
+    {
+        
+    }
+    
     public struct Circle
     {
         public Vector2 Center;

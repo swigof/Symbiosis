@@ -5,6 +5,7 @@ using Symbiosis.Entity;
 using Symbiosis.Input;
 using System;
 using System.Threading;
+using Symbiosis.Manager;
 
 namespace Symbiosis.Session;
 
@@ -47,6 +48,8 @@ public struct SessionGameState
                 if(_gameState.Clusters[i].Active)
                     _gameState.Clusters[i].Update();
             }
+            SpawnManager.Update(_gameState);
+            CollisionManager.Update(_gameState);
         }
         finally 
         {
