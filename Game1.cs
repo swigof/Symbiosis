@@ -30,6 +30,8 @@ public class Game1 : Game
 
     public static readonly int ResolutionWidth = 640;
     public static readonly int ResolutionHeight = 480;
+    public static readonly Rectangle ScreenBounds = new Rectangle(0, 0, ResolutionWidth, ResolutionHeight);
+
     private int _virtualResolutionWidth = ResolutionWidth;
     private int _virtualResolutionHeight = ResolutionHeight;
     private Matrix _screenScaleMatrix = Matrix.CreateScale(ScreenScale);

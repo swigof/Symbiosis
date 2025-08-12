@@ -20,7 +20,7 @@ public class GameSessionHandler : INetcodeSessionHandler, IDisposable
     Vector2 _remoteCursorPosition = Vector2.Zero;
     bool _running = true;
 
-    static readonly Rectangle _grassArea = new Rectangle(0, 0, Game1.ResolutionWidth, Game1.ResolutionHeight);
+    static readonly Rectangle _grassArea = Game1.ScreenBounds;
     static readonly Rectangle[] _shrubAreas =
     {
         new Rectangle(0, 0, Game1.ResolutionWidth, 32),
