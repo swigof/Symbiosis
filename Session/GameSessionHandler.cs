@@ -102,9 +102,9 @@ public class GameSessionHandler : INetcodeSessionHandler, IDisposable
 
     public void Draw(SpriteBatch spriteBatch)
     {
+        SessionGameState.Draw(spriteBatch);
         if (!SessionGameState.IsLocalCursorPlayer())
             spriteBatch.Draw(_cursorTexture, _remoteCursorPosition, null, QuarterTransparent);
-        SessionGameState.Draw(spriteBatch);
     }
 
     public void AdvanceFrame()

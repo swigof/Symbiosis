@@ -59,13 +59,13 @@ public struct SessionGameState
         _stateMutex.WaitOne();
         try
         {
-            _gameState.Frog.Draw(spriteBatch);
-            _gameState.Spider.Draw(spriteBatch);
             for (var i = 0; i < _gameState.Clusters.Length; i++)
             {
                 if(_gameState.Clusters[i].Active)
                     _gameState.Clusters[i].Draw(spriteBatch);
             }
+            _gameState.Frog.Draw(spriteBatch);
+            _gameState.Spider.Draw(spriteBatch);
         }
         finally
         {
