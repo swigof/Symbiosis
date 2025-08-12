@@ -48,6 +48,11 @@ public struct SessionGameState
                 if(_gameState.Clusters[i].Active)
                     _gameState.Clusters[i].Update();
             }
+            for (var i = 0; i < _gameState.FrogEnemies.Length; i++)
+            {
+                if(_gameState.FrogEnemies[i].Active)
+                    _gameState.FrogEnemies[i].Update(_gameState.Frog.Position);
+            }
             SpawnManager.Update(_gameState);
             CollisionManager.Update(_gameState);
         }
@@ -68,6 +73,11 @@ public struct SessionGameState
                     _gameState.Clusters[i].Draw(spriteBatch);
             }
             _gameState.Frog.Draw(spriteBatch);
+            for (var i = 0; i < _gameState.FrogEnemies.Length; i++)
+            {
+                if(_gameState.FrogEnemies[i].Active)
+                    _gameState.FrogEnemies[i].Draw(spriteBatch);
+            }
             _gameState.Spider.Draw(spriteBatch);
         }
         finally
