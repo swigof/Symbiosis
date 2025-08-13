@@ -1,6 +1,8 @@
-﻿using Backdash.Serialization;
+﻿using System.Text.Json.Serialization;
+using Backdash.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using static Symbiosis.Manager.CollisionManager;
 
 namespace Symbiosis.Entity;
 
@@ -17,6 +19,7 @@ public struct EggEnemyCluster : IBinarySerializable
     public EggEnemy[] EggEnemies = new EggEnemy[8];
     public bool Active = false;
 
+    [JsonIgnore] public Circle BoundingCircle => new Circle { Center = Position, Radius = _radius };
     const int _radius = 8;
     const int _eggEnemyRadius = 2;
     const int _speed = 1;
@@ -35,6 +38,14 @@ public struct EggEnemyCluster : IBinarySerializable
             EggEnemies[i].RelativePosition.X = Game1.Random.NextFloat() * (_radius - _eggEnemyRadius);
             EggEnemies[i].RelativePosition.Y = Game1.Random.NextFloat() * (_radius - _eggEnemyRadius);
         }
+    }
+    
+    public Circle[] GetEggEnemyBoundingCircles()
+    {
+        var circles = new Circle[EggEnemies.Length];
+        for (int i = 0; i < EggEnemies.Length; i++)
+            circles[i] = new Circle { Center = Position + EggEnemies[i].RelativePosition, Radius = _eggEnemyRadius };
+        return circles;
     }
 
     public void Update()

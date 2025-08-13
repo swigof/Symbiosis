@@ -8,7 +8,35 @@ public static class CollisionManager
 {
     public static void Update(ref GameState gamestate)
     {
-        
+        CheckFrogTongue(ref gamestate);
+    }
+
+    private static void CheckFrogTongue(ref GameState gamestate)
+    {
+        if (!gamestate.Frog.Tonguing) return;
+        var tongueBounds = gamestate.Frog.TongueBoundingCircle;
+        var tonguePartBounds = gamestate.Frog.GetTongueBoundingCircles();
+        for (var i = 0; i < gamestate.Clusters.Length; i++)
+        {
+            if (!gamestate.Clusters[i].Active) continue;
+            if (!gamestate.Clusters[i].BoundingCircle.Intersects(tongueBounds)) continue;
+            var eggEnemyBounds = gamestate.Clusters[i].GetEggEnemyBoundingCircles();
+            var hasActive = false;
+            for (var j = 0; j < eggEnemyBounds.Length; j++)
+            {
+                if (!gamestate.Clusters[i].EggEnemies[j].Active) continue;
+                for (var k = 0; k < tonguePartBounds.Length; k++)
+                {
+                    if (eggEnemyBounds[j].Intersects(tonguePartBounds[k]))
+                        gamestate.Clusters[i].EggEnemies[j].Active = false;
+                    else
+                        hasActive = true;
+                }
+            }
+            if (hasActive) continue;
+            gamestate.Clusters[i].Active = false;
+            gamestate.NextEggEnemyIndex = i;
+        }
     }
     
     public struct Circle

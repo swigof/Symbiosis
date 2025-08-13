@@ -31,6 +31,12 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
     int _tongueSegmentCount = 0;
     [JsonIgnore] public bool IsLocalPlayer = isLocalPlayer;
     [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
+    [JsonIgnore] public Circle TongueBoundingCircle =>
+        new Circle
+        {
+            Center = Position + FacingDirection * (_tongueSegmentSpacing * 2 + 10), 
+            Radius = _tongueSegmentRadius + _tongueSegmentSpacing
+        };
 
     const int _hopFrameLength = 10;
     const int _hopDelay = 15;
