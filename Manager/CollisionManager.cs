@@ -11,6 +11,8 @@ public static class CollisionManager
     {
         CheckFrogTongue(ref gamestate);
         CheckSpider(ref gamestate);
+        CheckFrog(ref gamestate);
+        CheckEggs(ref gamestate);
     }
 
     private static void CheckFrogTongue(ref GameState gamestate)
@@ -53,6 +55,41 @@ public static class CollisionManager
             gamestate.NextFrogEnemyIndex = i;
             gamestate.Spider.Movement = SpiderMovement.Returning;
             return;
+        }
+    }
+
+    private static void CheckFrog(ref GameState gamestate)
+    {
+        for (var i = 0; i < gamestate.FrogEnemies.Length; i++)
+        {
+            if (!gamestate.FrogEnemies[i].Active) continue;
+            if (!gamestate.FrogEnemies[i].BoundingCircle.Intersects(gamestate.Frog.BoundingCircle)) continue;
+            // TODO frog attacked behavior
+        }
+    }
+
+    private static void CheckEggs(ref GameState gamestate)
+    {
+        for (var i = 0; i < gamestate.Clusters.Length; i++)
+        {
+            if (!gamestate.Clusters[i].Active) continue;
+            if (!gamestate.Clusters[i].BoundingCircle.Intersects(Spider.HomeBoundingCircle)) continue;
+            var eggEnemyBounds = gamestate.Clusters[i].GetEggEnemyBoundingCircles();
+            var hasActive = false;
+            for (var j = 0; j < gamestate.Clusters[i].EggEnemies.Length; j++)
+            {
+                if (!gamestate.Clusters[i].EggEnemies[j].Active) continue;
+                if (eggEnemyBounds[j].Intersects(Spider.HomeBoundingCircle))
+                {
+                    gamestate.Clusters[i].EggEnemies[j].Active = false;
+                    // TODO eggs attacked behavior
+                }
+                else
+                    hasActive = true;
+            }
+            if (hasActive) continue;
+            gamestate.Clusters[i].Active = false;
+            gamestate.NextEggEnemyIndex = i;
         }
     }
     
