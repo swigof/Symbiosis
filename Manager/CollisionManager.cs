@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Symbiosis.Entity;
 using Symbiosis.Session;
 
 namespace Symbiosis.Manager;
@@ -9,6 +10,7 @@ public static class CollisionManager
     public static void Update(ref GameState gamestate)
     {
         CheckFrogTongue(ref gamestate);
+        CheckSpider(ref gamestate);
     }
 
     private static void CheckFrogTongue(ref GameState gamestate)
@@ -36,6 +38,21 @@ public static class CollisionManager
             if (hasActive) continue;
             gamestate.Clusters[i].Active = false;
             gamestate.NextEggEnemyIndex = i;
+        }
+    }
+
+    private static void CheckSpider(ref GameState gamestate)
+    {
+        if (gamestate.Spider.Movement != SpiderMovement.Going) return;
+        var spiderBounds = gamestate.Spider.BoundingCircle;
+        for (var i = 0; i < gamestate.FrogEnemies.Length; i++)
+        {
+            if (!gamestate.FrogEnemies[i].Active) continue;
+            if (!gamestate.FrogEnemies[i].BoundingCircle.Intersects(spiderBounds)) continue;
+            gamestate.FrogEnemies[i].Active = false;
+            gamestate.NextFrogEnemyIndex = i;
+            gamestate.Spider.Movement = SpiderMovement.Returning;
+            return;
         }
     }
     

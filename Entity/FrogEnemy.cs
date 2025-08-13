@@ -1,6 +1,8 @@
-﻿using Backdash.Serialization;
+﻿using System.Text.Json.Serialization;
+using Backdash.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using static Symbiosis.Manager.CollisionManager;
 
 namespace Symbiosis.Entity;
 
@@ -10,6 +12,8 @@ public struct FrogEnemy : IBinarySerializable
     public Vector2 Position = Vector2.Zero;
     public bool Active = false;
 
+    [JsonIgnore] public Circle BoundingCircle => new Circle { Center = Position, Radius = _radius };
+    
     const int _radius = 8;
     const int _speed = 1;
     static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("8pxcircle");
