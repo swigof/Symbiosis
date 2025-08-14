@@ -36,13 +36,13 @@ public class InputManager
 
             if (isActive)
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                if (Keyboard.GetState().IsKeyDown(Keys.Up) || Keyboard.GetState().IsKeyDown(Keys.W))
                     _localInput.DigitalInputs |= DigitalInputs.Up;
-                if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                if (Keyboard.GetState().IsKeyDown(Keys.Down) || Keyboard.GetState().IsKeyDown(Keys.S))
                     _localInput.DigitalInputs |= DigitalInputs.Down;
-                if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                if (Keyboard.GetState().IsKeyDown(Keys.Left) || Keyboard.GetState().IsKeyDown(Keys.A))
                     _localInput.DigitalInputs |= DigitalInputs.Left;
-                if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                if (Keyboard.GetState().IsKeyDown(Keys.Right) || Keyboard.GetState().IsKeyDown(Keys.D))
                     _localInput.DigitalInputs |= DigitalInputs.Right;
                 if (Keyboard.GetState().IsKeyDown(Keys.Space))
                     _localInput.DigitalInputs |= DigitalInputs.Action;
