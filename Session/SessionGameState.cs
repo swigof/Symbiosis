@@ -42,6 +42,7 @@ public struct SessionGameState
         try
         {
             _gameState.FrameNumber++;
+            _gameState.RoundFrame++;
             _gameState.Spider.Update(inputs[0].Input);
             _gameState.Frog.Update(inputs[1].Input);
             _gameState.PreviousInputs[0] = inputs[0];
