@@ -20,6 +20,8 @@ public struct EggEnemyCluster : IBinarySerializable
     public bool Active = false;
 
     [JsonIgnore] public Circle BoundingCircle => new Circle { Center = Position, Radius = _radius };
+    Vector2 _direction = Vector2.Zero;
+    
     const int _radius = 16;
     const int _eggEnemyRadius = 2;
     const float _speed = 0.25f;
@@ -32,6 +34,7 @@ public struct EggEnemyCluster : IBinarySerializable
     {
         Active = true;
         Position = position;
+        _direction = Vector2.Normalize(Spider.Home - Position);
         for (var i = 0; i < EggEnemies.Length; i++)
         {
             EggEnemies[i].Active = true;
@@ -50,7 +53,7 @@ public struct EggEnemyCluster : IBinarySerializable
 
     public void Update()
     {
-        Position += Vector2.Normalize(Spider.Home - Position) * _speed;
+        Position += _direction * _speed;
     }
 
     public void Draw(SpriteBatch spriteBatch)
