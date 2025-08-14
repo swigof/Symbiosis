@@ -31,6 +31,9 @@
 #begin Assets/shrub.png
 /copy:Assets/shrub.png
 
+#begin Assets/snake.png
+/copy:Assets/snake.png
+
 #begin Assets/spider.png
 /copy:Assets/spider.png
 

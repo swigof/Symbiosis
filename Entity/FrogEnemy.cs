@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 using Backdash.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,11 +14,12 @@ public struct FrogEnemy : IBinarySerializable
     public bool Active = false;
 
     [JsonIgnore] public Circle BoundingCircle => new Circle { Center = Position, Radius = _radius };
+    float _rotation = 0;
     
-    const int _radius = 8;
+    const int _radius = 25;
     const int _speed = 1;
-    static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("8pxcircle");
-    static readonly Vector2 _spriteCenter = new Vector2(4, 4);
+    static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("snake");
+    static readonly Vector2 _spriteCenter = new Vector2(64, 64);
 
     public FrogEnemy() { }
 
@@ -29,7 +31,9 @@ public struct FrogEnemy : IBinarySerializable
 
     public void Update(Vector2 frogPosition)
     {
-        Position += Vector2.Normalize(frogPosition - Position) * _speed;
+        var direction = Vector2.Normalize(frogPosition - Position);
+        Position += direction * _speed;
+        _rotation = (float) Math.Atan2(direction.X, -direction.Y);
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -38,8 +42,8 @@ public struct FrogEnemy : IBinarySerializable
             _idleTexture,
             Position,
             null,
-            Color.Red,
-            0,
+            Color.White,
+            _rotation,
             _spriteCenter,
             1,
             SpriteEffects.None,
