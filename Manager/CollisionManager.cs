@@ -65,7 +65,7 @@ public static class CollisionManager
         {
             if (!gamestate.FrogEnemies[i].Active) continue;
             if (!gamestate.FrogEnemies[i].BoundingCircle.Intersects(gamestate.Frog.BoundingCircle)) continue;
-            // TODO frog attacked behavior
+            gamestate.Frog.Respawning = true;
         }
     }
 

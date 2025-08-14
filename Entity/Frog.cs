@@ -27,6 +27,8 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
     public Vector2 FacingDirection = new Vector2(0, -1);
     public bool Tonguing = false;
     public byte TongueFrame = 0;
+    public bool Respawning = false;
+    public byte RespawnFrame = 0;
 
     int _tongueSegmentCount = 0;
     [JsonIgnore] public bool IsLocalPlayer = isLocalPlayer;
@@ -45,6 +47,7 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
     const int _tongueSegmentRadius = 6;
     const int _tongueSegmentSpacing = 6;
     const int _radius = 6;
+    const int _respawnFrameLength = 180;
     static readonly Vector2 _spriteCenter = new Vector2(8, 8);
     static readonly Vector2 _tongueSpriteCenter = new Vector2(4, 4);
     static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("frog");
@@ -52,6 +55,20 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
 
     public void Update(PlayerInputs inputs)
     {
+        if (Respawning)
+        {
+            if (RespawnFrame == 0)
+                Reset();
+            RespawnFrame++;
+            if (RespawnFrame == _respawnFrameLength)
+            {
+                Respawning = false;
+                RespawnFrame = 0;
+            }
+            else
+                return;
+        }
+        
         if (HopDirection == HopDirection.None && !Tonguing)
         {
             if (inputs.DigitalInputs.HasFlag(DigitalInputs.Action))
@@ -144,6 +161,7 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
 
     public void Draw(SpriteBatch spriteBatch)
     {
+        if (Respawning) return;
         var rotation = (float) Math.Atan2(FacingDirection.X, -FacingDirection.Y);
         foreach (var circle in GetTongueBoundingCircles())
         {
@@ -172,6 +190,18 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
         );
     }
 
+    public void Reset()
+    {
+        Position = new Vector2(Spider.Home.X, Spider.Home.Y - 50);
+        HopDirection = HopDirection.None;
+        HopFrame = 0;
+        HopCooldown = 0;
+        FacingDirection = new Vector2(0, -1);
+        Tonguing = false;
+        TongueFrame = 0;
+        _tongueSegmentCount = 0;
+    }
+
     public Circle[] GetTongueBoundingCircles()
     {
         Circle[] circles = new Circle[_tongueSegmentCount];
@@ -196,6 +226,8 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
         reader.Read(ref Tonguing);
         reader.Read(ref TongueFrame);
         reader.Read(ref FacingDirection);
+        reader.Read(ref Respawning);
+        reader.Read(ref RespawnFrame);
 
         HopDirection = (HopDirection)hopDirectionByte;
     }
@@ -211,5 +243,7 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
         writer.Write(in Tonguing);
         writer.Write(in TongueFrame);
         writer.Write(in FacingDirection);
+        writer.Write(in Respawning);
+        writer.Write(in RespawnFrame);
     }
 }

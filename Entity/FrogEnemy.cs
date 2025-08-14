@@ -29,9 +29,11 @@ public struct FrogEnemy : IBinarySerializable
         Position = position;
     }
 
-    public void Update(Vector2 frogPosition)
+    public void Update(Vector2 frogPosition, bool isRespawning)
     {
         var direction = Vector2.Normalize(frogPosition - Position);
+        if (isRespawning)
+            direction *= -1;
         Position += direction * _speed;
         _rotation = (float) Math.Atan2(direction.X, -direction.Y);
     }
