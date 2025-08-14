@@ -14,7 +14,7 @@ public struct GameState : IBinarySerializable
     public FrogEnemy[] FrogEnemies = new FrogEnemy[5];
     public int NextEggEnemyIndex = 0; 
     public int NextFrogEnemyIndex = 0;
-    public int EggCount = 1000;
+    public int EggCount = 100;
 
     public GameState()
     {
