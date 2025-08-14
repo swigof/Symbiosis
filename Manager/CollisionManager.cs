@@ -53,6 +53,7 @@ public static class CollisionManager
             if (!gamestate.FrogEnemies[i].BoundingCircle.Intersects(spiderBounds)) continue;
             gamestate.FrogEnemies[i].Active = false;
             gamestate.NextFrogEnemyIndex = i;
+            gamestate.Spider.Rotation += MathHelper.Pi;
             gamestate.Spider.Movement = SpiderMovement.Returning;
             return;
         }

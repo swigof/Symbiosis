@@ -22,7 +22,7 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
     public SpiderMovement Movement = SpiderMovement.None;
     public Vector2 Target = Vector2.Zero;
 
-    float _rotation = 0;
+    [JsonIgnore] public float Rotation = 0;
     Vector2 _direction = Vector2.Zero;
     float _movementDistanceSquared = 0;
     [JsonIgnore] public bool IsLocalPlayer = isLocalPlayer;
@@ -45,7 +45,7 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
                 var movementVector = Target - Home;
                 _movementDistanceSquared = movementVector.LengthSquared();
                 _direction = Vector2.Normalize(movementVector);
-                _rotation = (float)Math.Atan2(_direction.X, -_direction.Y);
+                Rotation = (float)Math.Atan2(_direction.X, -_direction.Y);
             }
         }
 
@@ -56,7 +56,7 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
             if ((Position - Home).LengthSquared() >= _movementDistanceSquared)
             {
                 Position = Target;
-                _rotation = _rotation + MathHelper.Pi;
+                Rotation += MathHelper.Pi;
                 Movement = SpiderMovement.Returning;
             }
         }
@@ -68,7 +68,7 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
             {
                 Movement = SpiderMovement.None;
                 Position = Home;
-                _rotation = 0;
+                Rotation = 0;
             }
         }
     }
@@ -80,7 +80,7 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
             Position,
             null,
             Color.White,
-            _rotation,
+            Rotation,
             _spriteCenter,
             1,
             SpriteEffects.None,
@@ -100,12 +100,12 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
         var movementVector = Target - Home;
         _movementDistanceSquared = movementVector.LengthSquared();
         _direction = Vector2.Normalize(movementVector);
-        _rotation = 0;
+        Rotation = 0;
         if (Movement != SpiderMovement.None)
         {
-            _rotation = (float)Math.Atan2(_direction.X, -_direction.Y);
+            Rotation = (float)Math.Atan2(_direction.X, -_direction.Y);
             if (Movement == SpiderMovement.Returning)
-                _rotation = _rotation + MathHelper.Pi;
+                Rotation += MathHelper.Pi;
         }
     }
 
