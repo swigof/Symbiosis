@@ -20,9 +20,9 @@ public struct EggEnemyCluster : IBinarySerializable
     public bool Active = false;
 
     [JsonIgnore] public Circle BoundingCircle => new Circle { Center = Position, Radius = _radius };
-    const int _radius = 8;
+    const int _radius = 16;
     const int _eggEnemyRadius = 2;
-    const int _speed = 1;
+    const float _speed = 0.25f;
     static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("8pxcircle");
     static readonly Vector2 _spriteCenter = new Vector2(1, 1);
 
