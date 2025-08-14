@@ -5,6 +5,7 @@ using Symbiosis.Entity;
 using Symbiosis.Input;
 using System;
 using System.Threading;
+using Microsoft.Xna.Framework;
 using Symbiosis.Manager;
 
 namespace Symbiosis.Session;
@@ -14,6 +15,8 @@ public struct SessionGameState
 {
     GameState _gameState = new GameState();
     Mutex _stateMutex = new Mutex();
+
+    SpriteFont _font = Game1.GameContent.Load<SpriteFont>("PublicPixel");
 
     public SessionGameState(bool isLocal, int firstLocalPlayerIndex)
     {
@@ -79,6 +82,9 @@ public struct SessionGameState
                     _gameState.FrogEnemies[i].Draw(spriteBatch);
             }
             _gameState.Spider.Draw(spriteBatch);
+            var scoreText = _gameState.EggCount.ToString();
+            Vector2 textSize = _font.MeasureString(scoreText);
+            spriteBatch.DrawString(_font, scoreText, Spider.Home - textSize / 2, Color.White);
         }
         finally
         {

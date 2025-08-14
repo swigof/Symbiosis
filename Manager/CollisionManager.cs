@@ -83,7 +83,7 @@ public static class CollisionManager
                 if (eggEnemyBounds[j].Intersects(Spider.HomeBoundingCircle))
                 {
                     gamestate.Clusters[i].EggEnemies[j].Active = false;
-                    // TODO eggs attacked behavior
+                    gamestate.EggCount--;
                 }
                 else
                     hasActive = true;

@@ -13,7 +13,8 @@ public struct GameState : IBinarySerializable
     public EggEnemyCluster[] Clusters = new EggEnemyCluster[5];
     public FrogEnemy[] FrogEnemies = new FrogEnemy[5];
     public int NextEggEnemyIndex = 0; 
-    public int NextFrogEnemyIndex = 0; 
+    public int NextFrogEnemyIndex = 0;
+    public int EggCount = 1000;
 
     public GameState()
     {
@@ -36,6 +37,7 @@ public struct GameState : IBinarySerializable
         reader.Read(ref FrogEnemies);
         reader.Read(ref NextEggEnemyIndex);
         reader.Read(ref NextFrogEnemyIndex);
+        reader.Read(ref EggCount);
     }
 
     public void Serialize(ref readonly BinaryBufferWriter writer)
@@ -49,5 +51,6 @@ public struct GameState : IBinarySerializable
         writer.Write(in FrogEnemies);
         writer.Write(in NextEggEnemyIndex);
         writer.Write(in NextFrogEnemyIndex);
+        writer.Write(in EggCount);
     }
 }

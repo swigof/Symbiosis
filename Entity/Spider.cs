@@ -31,8 +31,10 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
     const int _radius = 24;
     static readonly Vector2 _spriteCenter = new Vector2(32, 32);
     public static readonly Vector2 Home = new Vector2(Game1.ResolutionWidth/2, Game1.ResolutionHeight/2);
-    public static readonly Circle HomeBoundingCircle = new Circle { Center = Home, Radius = 20 };
+    public static readonly Circle HomeBoundingCircle = new Circle { Center = Home, Radius = 31 };
+    static readonly Vector2 _homeCenter = new Vector2(32, 32);
     static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("spider");
+    static readonly Texture2D _homeTexture = Game1.GameContent.Load<Texture2D>("hole");
 
     public void Update(PlayerInputs inputs)
     {
@@ -82,6 +84,17 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
             Color.White,
             Rotation,
             _spriteCenter,
+            1,
+            SpriteEffects.None,
+            0
+        );
+        spriteBatch.Draw(
+            _homeTexture,
+            Home,
+            null,
+            Color.Black,
+            0,
+            _homeCenter,
             1,
             SpriteEffects.None,
             0

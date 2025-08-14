@@ -28,6 +28,16 @@
 #begin Assets/grass.png
 /copy:Assets/grass.png
 
+#begin Assets/hole.png
+/copy:Assets/hole.png
+
+#begin Assets/PublicPixel.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Assets/PublicPixel.spritefont
+
 #begin Assets/shrub.png
 /copy:Assets/shrub.png
 
