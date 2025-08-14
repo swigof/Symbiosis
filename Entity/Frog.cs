@@ -34,18 +34,18 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
     [JsonIgnore] public Circle TongueBoundingCircle =>
         new Circle
         {
-            Center = Position + FacingDirection * (_tongueSegmentSpacing * 2 + 10), 
-            Radius = _tongueSegmentRadius + _tongueSegmentSpacing
+            Center = Position + FacingDirection * (_tongueSegmentSpacing * ((_tongueExtendFrameLength + 1) / 2f) + 10), 
+            Radius = _tongueSegmentRadius + _tongueSegmentSpacing * (_tongueExtendFrameLength / 2)
         };
 
     const int _hopFrameLength = 10;
     const int _hopDelay = 15;
     const float _hopFrameRotation = MathHelper.Pi / (_hopFrameLength * 8);
-    const int _tongueExtendFrameLength = 7;
+    const int _tongueExtendFrameLength = 7; // also the length of tongue at full extension
     const int _tongueSegmentRadius = 6;
     const int _tongueSegmentSpacing = 6;
-    const int _radius = 12;
-    static readonly Vector2 _spriteCenter = new Vector2(16, 16);
+    const int _radius = 6;
+    static readonly Vector2 _spriteCenter = new Vector2(8, 8);
     static readonly Vector2 _tongueSpriteCenter = new Vector2(4, 4);
     static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("frog");
     static readonly Texture2D _tongueSegmentTexture = Game1.GameContent.Load<Texture2D>("8pxcircle");

@@ -29,7 +29,7 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
     [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
 
     const int _radius = 24;
-    static readonly Vector2 _spriteCenter = new Vector2(16, 16);
+    static readonly Vector2 _spriteCenter = new Vector2(32, 32);
     public static readonly Vector2 Home = new Vector2(Game1.ResolutionWidth/2, Game1.ResolutionHeight/2);
     public static readonly Circle HomeBoundingCircle = new Circle { Center = Home, Radius = 20 };
     static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("spider");
@@ -82,7 +82,7 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
             Color.White,
             _rotation,
             _spriteCenter,
-            2,
+            1,
             SpriteEffects.None,
             0
         );
