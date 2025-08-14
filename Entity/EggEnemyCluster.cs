@@ -23,7 +23,7 @@ public struct EggEnemyCluster : IBinarySerializable
     const int _radius = 16;
     const int _eggEnemyRadius = 2;
     const float _speed = 0.25f;
-    static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("8pxcircle");
+    static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("ant");
     static readonly Vector2 _spriteCenter = new Vector2(1, 1);
 
     public EggEnemyCluster() { }
@@ -66,7 +66,7 @@ public struct EggEnemyCluster : IBinarySerializable
                     Color.Red,
                     0,
                     _spriteCenter,
-                    0.25f,
+                    1,
                     SpriteEffects.None,
                     0
                 );

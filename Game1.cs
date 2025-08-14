@@ -107,7 +107,7 @@ public class Game1 : Game
     {
         GraphicsDevice.Clear(Color.Black);
 
-        _spriteBatch.Begin(samplerState: SamplerState.LinearWrap, transformMatrix: _screenScaleMatrix);
+        _spriteBatch.Begin(samplerState: SamplerState.PointWrap, transformMatrix: _screenScaleMatrix);
         _sessionHandler.Draw(_spriteBatch);
         _spriteBatch.End();
 

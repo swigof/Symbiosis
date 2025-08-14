@@ -16,6 +16,9 @@
 #begin Assets/8pxcircle.png
 /copy:Assets/8pxcircle.png
 
+#begin Assets/ant.png
+/copy:Assets/ant.png
+
 #begin Assets/cursor_none.png
 /copy:Assets/cursor_none.png
 
