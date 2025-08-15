@@ -96,9 +96,6 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
         InputManager.Instance.UpdateLocalInput(IsActive);
 
         base.Update(gameTime);
