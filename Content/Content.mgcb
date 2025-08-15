@@ -22,6 +22,9 @@
 #begin Assets/grass.png
 /copy:Assets/grass.png
 
+#begin Assets/pause-overlay.png
+/copy:Assets/pause-overlay.png
+
 #begin Assets/PublicPixel.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

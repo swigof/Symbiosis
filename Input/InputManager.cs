@@ -46,6 +46,8 @@ public class InputManager
                     _localInput.DigitalInputs |= DigitalInputs.Right;
                 if (Keyboard.GetState().IsKeyDown(Keys.Space))
                     _localInput.DigitalInputs |= DigitalInputs.Action;
+                if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                    _localInput.DigitalInputs |= DigitalInputs.Escape;
                 var mouseState = Mouse.GetState();
                 var viewport = Game1.Graphics.GraphicsDevice.Viewport;
                 if (viewport.Bounds.Contains(mouseState.Position))

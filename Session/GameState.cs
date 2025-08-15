@@ -18,6 +18,7 @@ public struct GameState : IBinarySerializable
     public int RoundFrame = 0;
     public int LastEggEnemySpawn = 0;
     public int LastFrogEnemySpawn = 0;
+    public bool Paused = false;
 
     public GameState()
     {
@@ -44,6 +45,7 @@ public struct GameState : IBinarySerializable
         reader.Read(ref RoundFrame);
         reader.Read(ref LastEggEnemySpawn);
         reader.Read(ref LastFrogEnemySpawn);
+        reader.Read(ref Paused);
     }
 
     public void Serialize(ref readonly BinaryBufferWriter writer)
@@ -61,5 +63,6 @@ public struct GameState : IBinarySerializable
         writer.Write(in RoundFrame);
         writer.Write(in LastEggEnemySpawn);
         writer.Write(in LastFrogEnemySpawn);
+        writer.Write(in Paused);
     }
 }

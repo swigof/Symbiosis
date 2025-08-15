@@ -16,7 +16,8 @@ public struct SessionGameState
     GameState _gameState = new GameState();
     Mutex _stateMutex = new Mutex();
 
-    SpriteFont _font = Game1.GameContent.Load<SpriteFont>("PublicPixel");
+    static readonly SpriteFont _font = Game1.GameContent.Load<SpriteFont>("PublicPixel");
+    static readonly Texture2D _pauseOverlay = Game1.GameContent.Load<Texture2D>("pause-overlay");
 
     public SessionGameState(bool isLocal, int firstLocalPlayerIndex)
     {
@@ -42,11 +43,22 @@ public struct SessionGameState
         try
         {
             _gameState.FrameNumber++;
+
+            for (var i = 0; i < _gameState.PreviousInputs.Length; i++)
+            {
+                if (_gameState.PreviousInputs[i].DigitalInputs.HasFlag(DigitalInputs.Escape) &&
+                    !inputs[i].Input.DigitalInputs.HasFlag(DigitalInputs.Escape))
+                {
+                    _gameState.Paused = !_gameState.Paused;
+                    break;
+                }
+            }
+
+            if (_gameState.Paused) return;
+
             _gameState.RoundFrame++;
             _gameState.Spider.Update(inputs[0].Input);
             _gameState.Frog.Update(inputs[1].Input);
-            _gameState.PreviousInputs[0] = inputs[0];
-            _gameState.PreviousInputs[1] = inputs[1];
             for (var i = 0; i < _gameState.Clusters.Length; i++)
             {
                 if(_gameState.Clusters[i].Active)
@@ -62,6 +74,8 @@ public struct SessionGameState
         }
         finally 
         {
+            _gameState.PreviousInputs[0] = inputs[0];
+            _gameState.PreviousInputs[1] = inputs[1];
             _stateMutex.ReleaseMutex();
         }
     }
@@ -71,6 +85,9 @@ public struct SessionGameState
         _stateMutex.WaitOne();
         try
         {
+            if (_gameState.Paused)
+                gameTime.ElapsedGameTime = new TimeSpan(0);
+            
             for (var i = 0; i < _gameState.Clusters.Length; i++)
             {
                 if(_gameState.Clusters[i].Active)
@@ -86,6 +103,9 @@ public struct SessionGameState
             var scoreText = _gameState.EggCount.ToString();
             Vector2 textSize = _font.MeasureString(scoreText);
             spriteBatch.DrawString(_font, scoreText, Spider.Home - textSize / 2, Color.White);
+            
+            if (_gameState.Paused)
+                spriteBatch.Draw(_pauseOverlay, Game1.ScreenBounds, Color.White);
         }
         finally
         {

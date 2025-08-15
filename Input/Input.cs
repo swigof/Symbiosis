@@ -13,7 +13,8 @@ public enum DigitalInputs : ushort
     Left = 1 << 2,
     Right = 1 << 3,
     Action = 1 << 4,
-    Click = 1 << 5
+    Click = 1 << 5,
+    Escape = 1 << 6
 }
 
 public struct CursorPosition
