@@ -66,7 +66,7 @@ public struct SessionGameState
         }
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         _stateMutex.WaitOne();
         try
@@ -74,15 +74,15 @@ public struct SessionGameState
             for (var i = 0; i < _gameState.Clusters.Length; i++)
             {
                 if(_gameState.Clusters[i].Active)
-                    _gameState.Clusters[i].Draw(spriteBatch);
+                    _gameState.Clusters[i].Draw(spriteBatch, gameTime);
             }
-            _gameState.Frog.Draw(spriteBatch);
+            _gameState.Frog.Draw(spriteBatch, gameTime);
             for (var i = 0; i < _gameState.FrogEnemies.Length; i++)
             {
                 if(_gameState.FrogEnemies[i].Active)
-                    _gameState.FrogEnemies[i].Draw(spriteBatch);
+                    _gameState.FrogEnemies[i].Draw(spriteBatch, gameTime);
             }
-            _gameState.Spider.Draw(spriteBatch);
+            _gameState.Spider.Draw(spriteBatch, gameTime);
             var scoreText = _gameState.EggCount.ToString();
             Vector2 textSize = _font.MeasureString(scoreText);
             spriteBatch.DrawString(_font, scoreText, Spider.Home - textSize / 2, Color.White);

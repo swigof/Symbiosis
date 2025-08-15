@@ -13,23 +13,14 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Assets/8pxcircle.png
-/copy:Assets/8pxcircle.png
-
-#begin Assets/ant.png
-/copy:Assets/ant.png
+#begin Assets/atlas-definition.xml
+/copy:Assets/atlas-definition.xml
 
 #begin Assets/cursor_none.png
 /copy:Assets/cursor_none.png
 
-#begin Assets/frog.png
-/copy:Assets/frog.png
-
 #begin Assets/grass.png
 /copy:Assets/grass.png
-
-#begin Assets/hole.png
-/copy:Assets/hole.png
 
 #begin Assets/PublicPixel.spritefont
 /importer:FontDescriptionImporter
@@ -41,9 +32,6 @@
 #begin Assets/shrub.png
 /copy:Assets/shrub.png
 
-#begin Assets/snake.png
-/copy:Assets/snake.png
-
-#begin Assets/spider.png
-/copy:Assets/spider.png
+#begin Assets/texture-atlas.png
+/copy:Assets/texture-atlas.png
 

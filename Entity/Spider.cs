@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Symbiosis.Input;
 using System;
 using System.Text.Json.Serialization;
+using MonoGameLibrary.Graphics;
 using static Symbiosis.Manager.CollisionManager;
 
 namespace Symbiosis.Entity;
@@ -15,7 +16,7 @@ public enum SpiderMovement : byte
     Returning
 }
 
-public struct Spider(bool isLocalPlayer) : IBinarySerializable
+public struct Spider : IBinarySerializable
 {
     // Game State
     public Vector2 Position = Home;
@@ -25,17 +26,22 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
     [JsonIgnore] public float Rotation = 0;
     Vector2 _direction = Vector2.Zero;
     float _movementDistanceSquared = 0;
-    [JsonIgnore] public bool IsLocalPlayer = isLocalPlayer;
+    [JsonIgnore] public bool IsLocalPlayer = false;
     [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
 
     const int _radius = 24;
-    static readonly Vector2 _spriteCenter = new Vector2(32, 32);
     public static readonly Vector2 Home = new Vector2(Game1.ResolutionWidth/2, Game1.ResolutionHeight/2);
     public static readonly Circle HomeBoundingCircle = new Circle { Center = Home, Radius = 31 };
-    static readonly Vector2 _homeCenter = new Vector2(32, 32);
-    static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("spider");
-    static readonly Texture2D _homeTexture = Game1.GameContent.Load<Texture2D>("hole");
+    static readonly AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("spider-move-animation");
+    static readonly Sprite _homeTexture = Game1.Atlas.CreateSprite("hole");
 
+    public Spider(bool isLocalPlayer)
+    {
+        IsLocalPlayer = isLocalPlayer;
+        _animation.CenterOrigin();
+        _homeTexture.CenterOrigin();
+    }
+    
     public void Update(PlayerInputs inputs)
     {
         if (Movement == SpiderMovement.None)
@@ -75,30 +81,12 @@ public struct Spider(bool isLocalPlayer) : IBinarySerializable
         }
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        spriteBatch.Draw(
-            _idleTexture,
-            Position,
-            null,
-            Color.White,
-            Rotation,
-            _spriteCenter,
-            1,
-            SpriteEffects.None,
-            0
-        );
-        spriteBatch.Draw(
-            _homeTexture,
-            Home,
-            null,
-            Color.Black,
-            0,
-            _homeCenter,
-            1,
-            SpriteEffects.None,
-            0
-        );
+        _animation.Update(gameTime);
+        _animation.Rotation = Rotation;
+        _animation.Draw(spriteBatch, Position);
+        _homeTexture.Draw(spriteBatch, Home);
     }
 
     public void Deserialize(ref readonly BinaryBufferReader reader)

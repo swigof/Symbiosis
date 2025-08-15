@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Backdash.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGameLibrary.Graphics;
 using static Symbiosis.Manager.CollisionManager;
 
 namespace Symbiosis.Entity;
@@ -18,10 +19,12 @@ public struct FrogEnemy : IBinarySerializable
     
     const int _radius = 25;
     const int _speed = 1;
-    static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("snake");
-    static readonly Vector2 _spriteCenter = new Vector2(64, 64);
+    static readonly AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("snake-move-animation");
 
-    public FrogEnemy() { }
+    public FrogEnemy()
+    {
+        _animation.CenterOrigin();
+    }
 
     public void Init(Vector2 position)
     {
@@ -38,19 +41,11 @@ public struct FrogEnemy : IBinarySerializable
         _rotation = (float) Math.Atan2(direction.X, -direction.Y);
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        spriteBatch.Draw(
-            _idleTexture,
-            Position,
-            null,
-            Color.White,
-            _rotation,
-            _spriteCenter,
-            1,
-            SpriteEffects.None,
-            0
-        );
+        _animation.Update(gameTime);
+        _animation.Rotation = _rotation;
+        _animation.Draw(spriteBatch, Position);
     }
 
     public void Deserialize(ref readonly BinaryBufferReader reader)

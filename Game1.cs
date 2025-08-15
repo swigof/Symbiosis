@@ -8,11 +8,13 @@ using Microsoft.Xna.Framework.Input;
 using Symbiosis.Input;
 using Symbiosis.Session;
 using System.Threading;
+using MonoGameLibrary.Graphics;
 
 namespace Symbiosis;
 
 public class Game1 : Game
 {
+    public static TextureAtlas Atlas;
     public static ContentManager GameContent;
     public static INetcodeRandom Random;
     public static GraphicsDeviceManager Graphics;
@@ -89,8 +91,7 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         Mouse.SetCursor(MouseCursor.FromTexture2D(GameContent.Load<Texture2D>("cursor_none"), 0, 0));
-        GameContent.Load<Texture2D>("frog");
-        GameContent.Load<Texture2D>("spider");
+        Atlas = TextureAtlas.FromFile(Content, "atlas-definition.xml");
     }
 
     protected override void Update(GameTime gameTime)
@@ -108,7 +109,7 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.Black);
 
         _spriteBatch.Begin(samplerState: SamplerState.PointWrap, transformMatrix: _screenScaleMatrix);
-        _sessionHandler.Draw(_spriteBatch);
+        _sessionHandler.Draw(_spriteBatch, gameTime);
         _spriteBatch.End();
 
         base.Draw(gameTime);

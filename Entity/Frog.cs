@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Symbiosis.Input;
 using System;
 using System.Text.Json.Serialization;
+using MonoGameLibrary.Graphics;
 using static Symbiosis.Manager.CollisionManager;
 
 namespace Symbiosis.Entity;
@@ -17,7 +18,7 @@ public enum HopDirection : byte
     Backward
 }
 
-public struct Frog(bool isLocalPlayer) : IBinarySerializable
+public struct Frog : IBinarySerializable
 {
     // Game State
     public Vector2 Position = new Vector2(Spider.Home.X, Spider.Home.Y - 50);
@@ -31,12 +32,12 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
     public byte RespawnFrame = 0;
 
     int _tongueSegmentCount = 0;
-    [JsonIgnore] public bool IsLocalPlayer = isLocalPlayer;
+    [JsonIgnore] public bool IsLocalPlayer = false;
     [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
     [JsonIgnore] public Circle TongueBoundingCircle =>
         new Circle
         {
-            Center = Position + FacingDirection * (_tongueSegmentSpacing * ((_tongueExtendFrameLength + 1) / 2f) + 10), 
+            Center = Position + FacingDirection * (_tongueSegmentSpacing * ((_tongueExtendFrameLength + 1) / 2f) + 5), 
             Radius = _tongueSegmentRadius + _tongueSegmentSpacing * (_tongueExtendFrameLength / 2)
         };
 
@@ -44,14 +45,19 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
     const int _hopDelay = 15;
     const float _hopFrameRotation = MathHelper.Pi / (_hopFrameLength * 8);
     const int _tongueExtendFrameLength = 7; // also the length of tongue at full extension
-    const int _tongueSegmentRadius = 6;
-    const int _tongueSegmentSpacing = 6;
+    const int _tongueSegmentRadius = 4;
+    const int _tongueSegmentSpacing = 4;
     const int _radius = 6;
     const int _respawnFrameLength = 180;
-    static readonly Vector2 _spriteCenter = new Vector2(8, 8);
-    static readonly Vector2 _tongueSpriteCenter = new Vector2(4, 4);
-    static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("frog");
-    static readonly Texture2D _tongueSegmentTexture = Game1.GameContent.Load<Texture2D>("8pxcircle");
+    static readonly AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("frog-move-animation");
+    static readonly Sprite _tongueSegmentTexture = Game1.Atlas.CreateSprite("tongue");
+
+    public Frog(bool isLocalPlayer)
+    {
+        IsLocalPlayer = isLocalPlayer;
+        _animation.CenterOrigin();
+        _tongueSegmentTexture.CenterOrigin();
+    }
 
     public void Update(PlayerInputs inputs)
     {
@@ -159,35 +165,18 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
         }
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         if (Respawning) return;
         var rotation = (float) Math.Atan2(FacingDirection.X, -FacingDirection.Y);
         foreach (var circle in GetTongueBoundingCircles())
         {
-            spriteBatch.Draw(
-                _tongueSegmentTexture,
-                circle.Center,
-                null,
-                Color.Pink,
-                rotation,
-                _tongueSpriteCenter,
-                1.5f,
-                SpriteEffects.None,
-                0
-            );
+            _tongueSegmentTexture.Rotation = rotation;
+            _tongueSegmentTexture.Draw(spriteBatch, circle.Center);
         }
-        spriteBatch.Draw(
-            _idleTexture,
-            Position,
-            null,
-            Color.White,
-            rotation,
-            _spriteCenter,
-            1,
-            SpriteEffects.None,
-            0
-        );
+        _animation.Update(gameTime);
+        _animation.Rotation = rotation;
+        _animation.Draw(spriteBatch, Position);
     }
 
     public void Reset()
@@ -208,7 +197,7 @@ public struct Frog(bool isLocalPlayer) : IBinarySerializable
         for (var i = 0; i < _tongueSegmentCount; i++)
         {
             circles[i] = new Circle { 
-                Center = Position + FacingDirection * (_tongueSegmentSpacing * i + 10),
+                Center = Position + FacingDirection * (_tongueSegmentSpacing * i + 5),
                 Radius = _tongueSegmentRadius
             };
         }

@@ -2,6 +2,7 @@
 using Backdash.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGameLibrary.Graphics;
 using static Symbiosis.Manager.CollisionManager;
 
 namespace Symbiosis.Entity;
@@ -25,10 +26,12 @@ public struct EggEnemyCluster : IBinarySerializable
     const int _radius = 16;
     const int _eggEnemyRadius = 2;
     const float _speed = 0.25f;
-    static readonly Texture2D _idleTexture = Game1.GameContent.Load<Texture2D>("ant");
-    static readonly Vector2 _spriteCenter = new Vector2(1, 1);
+    static readonly AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("ant-move-animation");
 
-    public EggEnemyCluster() { }
+    public EggEnemyCluster()
+    {
+        _animation.CenterOrigin();
+    }
 
     public void Init(Vector2 position)
     {
@@ -56,23 +59,14 @@ public struct EggEnemyCluster : IBinarySerializable
         Position += _direction * _speed;
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         for (var i = 0; i < EggEnemies.Length; i++)
         {
             if (EggEnemies[i].Active)
             {
-                spriteBatch.Draw(
-                    _idleTexture,
-                    Position + EggEnemies[i].RelativePosition,
-                    null,
-                    Color.Red,
-                    0,
-                    _spriteCenter,
-                    1,
-                    SpriteEffects.None,
-                    0
-                );
+                _animation.Update(gameTime);
+                _animation.Draw(spriteBatch, Position + EggEnemies[i].RelativePosition);
             }
         }
     }

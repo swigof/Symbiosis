@@ -110,10 +110,10 @@ public class GameSessionHandler : INetcodeSessionHandler, IDisposable
         _session.AdvanceFrame();
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         spriteBatch.Draw(_grassTexture, _grassArea, _grassArea, Color.White);
-        SessionGameState.Draw(spriteBatch);
+        SessionGameState.Draw(spriteBatch, gameTime);
         for (int i = 0; i < _shrubAreas.Length; i++)
             spriteBatch.Draw(_shrubsTexture, _shrubAreas[i], _shrubAreas[i], Color.White);
         if (!SessionGameState.IsLocalCursorPlayer())
