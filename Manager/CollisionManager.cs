@@ -83,10 +83,13 @@ public static class CollisionManager
                 if (eggEnemyBounds[j].Intersects(Spider.HomeBoundingCircle))
                 {
                     gamestate.Clusters[i].EggEnemies[j].Active = false;
+                    gamestate.EggCount--;
                     if (gamestate.EggCount <= 0)
+                    {
                         gamestate.EggCount = 0;
-                    else
-                        gamestate.EggCount--;
+                        if (gamestate.EndedOnFrame == 0)
+                            gamestate.EndedOnFrame = gamestate.FrameNumber;
+                    }
                 }
                 else
                     hasActive = true;

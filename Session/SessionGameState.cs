@@ -16,6 +16,9 @@ public struct SessionGameState
     GameState _gameState = new GameState();
     Mutex _stateMutex = new Mutex();
 
+    float _endTextScale = 0;
+    Vector2 _endTextPosition = new Vector2(Game1.ResolutionWidth / 2f, 0); 
+
     static readonly SpriteFont _font = Game1.GameContent.Load<SpriteFont>("PublicPixel");
     static readonly Texture2D _pauseOverlay = Game1.GameContent.Load<Texture2D>("pause-overlay");
 
@@ -43,6 +46,19 @@ public struct SessionGameState
         try
         {
             _gameState.FrameNumber++;
+
+            if (_gameState.EndedOnFrame != 0)
+            {
+                var endFrame = _gameState.FrameNumber - _gameState.EndedOnFrame;
+                if (endFrame > 60) return;
+                _endTextPosition.Y = MathHelper.CatmullRom(
+                    -100, Game1.ResolutionHeight / 2f, Game1.ResolutionHeight * 0.3f, 0, endFrame / 60f
+                );
+                _endTextScale = MathHelper.CatmullRom(
+                    0, 1, 5, 1, endFrame / 60f
+                );
+                return;
+            }
 
             for (var i = 0; i < _gameState.PreviousInputs.Length; i++)
             {
@@ -85,7 +101,41 @@ public struct SessionGameState
         _stateMutex.WaitOne();
         try
         {
-            if (_gameState.Paused)
+            if (_gameState.RoundLost)
+            {
+                var loseText = "FAILURE";
+                Vector2 loseTextSize = _font.MeasureString(loseText);
+                spriteBatch.DrawString(
+                    _font, 
+                    loseText, 
+                    _endTextPosition, 
+                    Color.Red, 
+                    0, 
+                    loseTextSize / 2, 
+                    _endTextScale, 
+                    SpriteEffects.None, 
+                    0
+                );
+            }
+            
+            if (_gameState.RoundWon)
+            {
+                var winText = "SUCCESS";
+                Vector2 winTextSize = _font.MeasureString(winText);
+                spriteBatch.DrawString(
+                    _font, 
+                    winText, 
+                    _endTextPosition, 
+                    Color.Green, 
+                    0, 
+                    winTextSize / 2,
+                    _endTextScale, 
+                    SpriteEffects.None, 
+                    0
+                );
+            }
+            
+            if (_gameState.Paused || _gameState.EndedOnFrame != 0)
                 gameTime.ElapsedGameTime = new TimeSpan(0);
             
             for (var i = 0; i < _gameState.Clusters.Length; i++)
@@ -104,7 +154,7 @@ public struct SessionGameState
             Vector2 textSize = _font.MeasureString(scoreText);
             spriteBatch.DrawString(_font, scoreText, Spider.Home - textSize / 2, Color.White);
             
-            if (_gameState.Paused)
+            if (_gameState.Paused || _gameState.EndedOnFrame != 0)
                 spriteBatch.Draw(_pauseOverlay, Game1.ScreenBounds, Color.White);
         }
         finally

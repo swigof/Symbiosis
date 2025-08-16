@@ -23,7 +23,31 @@ public static class SpawnManager
             SpawnFrogEnemy(ref gamestate);
         }
         
-        if (gamestate.RoundFrame < _startDelay || gamestate.RoundFrame > _roundDuration) return;
+        if (gamestate.RoundFrame < _startDelay) return;
+        
+        if (gamestate.RoundFrame > _roundDuration)
+        {
+            bool hasEnemy = false;
+            foreach (var enemy in gamestate.FrogEnemies)
+            {
+                if (enemy.Active)
+                {
+                    hasEnemy = true;
+                    break;
+                }
+            }
+            foreach (var enemy in gamestate.Clusters)
+            {
+                if (enemy.Active)
+                {
+                    hasEnemy = true;
+                    break;
+                }
+            }
+            if (!hasEnemy && gamestate.EndedOnFrame == 0)
+                gamestate.EndedOnFrame = gamestate.FrameNumber;
+            return;
+        }
 
         var lerpValue = (float)gamestate.RoundFrame / _maxSpawnFrame;
         var eggEnemyDelay = MathHelper.Lerp(_framesPerEggEnemyStart, _framesPerEggEnemyEnd, lerpValue);
