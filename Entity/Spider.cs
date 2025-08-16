@@ -26,14 +26,14 @@ public struct Spider : IBinarySerializable
     [JsonIgnore] public float Rotation = 0;
     Vector2 _direction = Vector2.Zero;
     float _movementDistanceSquared = 0;
+    AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("spider-move-animation");
+    Sprite _homeTexture = Game1.Atlas.CreateSprite("hole");
     [JsonIgnore] public bool IsLocalPlayer = false;
     [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
 
     const int _radius = 24;
     public static readonly Vector2 Home = new Vector2(Game1.ResolutionWidth/2, Game1.ResolutionHeight/2);
     public static readonly Circle HomeBoundingCircle = new Circle { Center = Home, Radius = 31 };
-    static readonly AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("spider-move-animation");
-    static readonly Sprite _homeTexture = Game1.Atlas.CreateSprite("hole");
 
     public Spider(bool isLocalPlayer)
     {

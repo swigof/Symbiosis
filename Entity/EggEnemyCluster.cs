@@ -22,11 +22,11 @@ public struct EggEnemyCluster : IBinarySerializable
 
     [JsonIgnore] public Circle BoundingCircle => new Circle { Center = Position, Radius = _radius };
     Vector2 _direction = Vector2.Zero;
+    AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("ant-move-animation");
     
     const int _radius = 16;
     const int _eggEnemyRadius = 2;
     const float _speed = 0.25f;
-    static readonly AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("ant-move-animation");
 
     public EggEnemyCluster()
     {

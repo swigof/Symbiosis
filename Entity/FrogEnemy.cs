@@ -15,11 +15,11 @@ public struct FrogEnemy : IBinarySerializable
     public bool Active = false;
 
     [JsonIgnore] public Circle BoundingCircle => new Circle { Center = Position, Radius = _radius };
+    AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("snake-move-animation");
     float _rotation = 0;
     
     const int _radius = 25;
     const int _speed = 1;
-    static readonly AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("snake-move-animation");
 
     public FrogEnemy()
     {

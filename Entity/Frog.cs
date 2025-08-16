@@ -32,6 +32,8 @@ public struct Frog : IBinarySerializable
     public byte RespawnFrame = 0;
 
     int _tongueSegmentCount = 0;
+    AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("frog-move-animation");
+    Sprite _tongueSegmentTexture = Game1.Atlas.CreateSprite("tongue");
     [JsonIgnore] public bool IsLocalPlayer = false;
     [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
     [JsonIgnore] public Circle TongueBoundingCircle =>
@@ -49,8 +51,6 @@ public struct Frog : IBinarySerializable
     const int _tongueSegmentSpacing = 4;
     const int _radius = 6;
     const int _respawnFrameLength = 180;
-    static readonly AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("frog-move-animation");
-    static readonly Sprite _tongueSegmentTexture = Game1.Atlas.CreateSprite("tongue");
 
     public Frog(bool isLocalPlayer)
     {
