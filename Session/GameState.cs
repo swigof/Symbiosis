@@ -2,6 +2,7 @@
 using Backdash.Serialization;
 using Symbiosis.Entity;
 using Symbiosis.Input;
+using Symbiosis.UI;
 
 namespace Symbiosis.Session;
 
@@ -21,6 +22,7 @@ public struct GameState : IBinarySerializable
     public int LastFrogEnemySpawn = 0;
     public bool Paused = false;
     public int EndedOnFrame = 0;
+    public ButtonState RetryButtonState = new ButtonState();
 
     [JsonIgnore] public bool RoundLost => EndedOnFrame > 0 && EggCount <= 0; 
     [JsonIgnore] public bool RoundWon => EndedOnFrame > 0 && EggCount > 0; 
@@ -52,6 +54,7 @@ public struct GameState : IBinarySerializable
         reader.Read(ref LastFrogEnemySpawn);
         reader.Read(ref Paused);
         reader.Read(ref EndedOnFrame);
+        reader.Read(ref RetryButtonState);
     }
 
     public void Serialize(ref readonly BinaryBufferWriter writer)
@@ -71,5 +74,6 @@ public struct GameState : IBinarySerializable
         writer.Write(in LastFrogEnemySpawn);
         writer.Write(in Paused);
         writer.Write(in EndedOnFrame);
+        writer.Write(in RetryButtonState);
     }
 }

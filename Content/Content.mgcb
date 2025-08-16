@@ -16,6 +16,9 @@
 #begin Assets/atlas-definition.xml
 /copy:Assets/atlas-definition.xml
 
+#begin Assets/button.png
+/copy:Assets/button.png
+
 #begin Assets/cursor_none.png
 /copy:Assets/cursor_none.png
 

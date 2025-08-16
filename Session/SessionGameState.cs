@@ -7,18 +7,21 @@ using System;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Symbiosis.Manager;
+using Symbiosis.UI;
 
 namespace Symbiosis.Session;
 
 // Provides thread protected game state access
-public struct SessionGameState
+public class SessionGameState
 {
     GameState _gameState = new GameState();
     Mutex _stateMutex = new Mutex();
 
     float _endTextScale = 0;
     Vector2 _endTextPosition = new Vector2(Game1.ResolutionWidth / 2f, 0); 
+    Button _retryButton;
 
+    static readonly Vector2 _retryButtonPosition = new Vector2(Game1.ResolutionWidth/2f, Game1.ResolutionHeight*0.8f);
     static readonly SpriteFont _font = Game1.GameContent.Load<SpriteFont>("PublicPixel");
     static readonly Texture2D _pauseOverlay = Game1.GameContent.Load<Texture2D>("pause-overlay");
 
@@ -35,10 +38,30 @@ public struct SessionGameState
             _gameState.Spider = new Spider(firstLocalPlayerIndex == 0);
             _gameState.Frog = new Frog(firstLocalPlayerIndex == 1);
         }
+
+        _retryButton = new Button(_retryButtonPosition, "Retry", Reset);
     }
 
     // Not thread protected. Not guaranteed to be state alligned. 
     public bool IsLocalCursorPlayer() => _gameState.Spider.IsLocalPlayer;
+
+    private void Reset(object sender, EventArgs e)
+    {
+        _stateMutex.WaitOne();
+        try
+        {
+            GameState gamestate = new GameState();
+            gamestate.FrameNumber = _gameState.FrameNumber;
+            gamestate.PreviousInputs = _gameState.PreviousInputs;
+            gamestate.Frog = new Frog(_gameState.Frog.IsLocalPlayer);
+            gamestate.Spider = new Spider(_gameState.Spider.IsLocalPlayer);
+            _gameState = gamestate;
+        }
+        finally
+        {
+            _stateMutex.ReleaseMutex();
+        }
+    }
 
     public void Update(ReadOnlySpan<SynchronizedInput<PlayerInputs>> inputs)
     {
@@ -49,6 +72,7 @@ public struct SessionGameState
 
             if (_gameState.EndedOnFrame != 0)
             {
+                _retryButton.Update(inputs[0].Input, _gameState.PreviousInputs[0], ref _gameState.RetryButtonState);
                 var endFrame = _gameState.FrameNumber - _gameState.EndedOnFrame;
                 if (endFrame > 60) return;
                 _endTextPosition.Y = MathHelper.CatmullRom(
@@ -70,7 +94,11 @@ public struct SessionGameState
                 }
             }
 
-            if (_gameState.Paused) return;
+            if (_gameState.Paused)
+            {
+                _retryButton.Update(inputs[0].Input, _gameState.PreviousInputs[0], ref _gameState.RetryButtonState);
+                return;
+            }
 
             _gameState.RoundFrame++;
             _gameState.Spider.Update(inputs[0].Input);
@@ -155,7 +183,10 @@ public struct SessionGameState
             spriteBatch.DrawString(_font, scoreText, Spider.Home - textSize / 2, Color.White);
             
             if (_gameState.Paused || _gameState.EndedOnFrame != 0)
+            {
                 spriteBatch.Draw(_pauseOverlay, Game1.ScreenBounds, Color.White);
+                _retryButton.Draw(spriteBatch, _gameState.RetryButtonState);
+            }
         }
         finally
         {
