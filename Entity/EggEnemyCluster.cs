@@ -61,11 +61,11 @@ public struct EggEnemyCluster : IBinarySerializable
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
+        _animation.Update(gameTime);
         for (var i = 0; i < EggEnemies.Length; i++)
         {
             if (EggEnemies[i].Active)
             {
-                _animation.Update(gameTime);
                 _animation.Draw(spriteBatch, Position + EggEnemies[i].RelativePosition);
             }
         }
