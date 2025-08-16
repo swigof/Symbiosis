@@ -28,17 +28,17 @@ if (mode.StartsWith("C") || mode.StartsWith("R"))
         remoteAddress = ip + ":" + Console.ReadLine();
     }
 
-    Console.Write("Connect as player 1 or 2: ");
-    var player = Convert.ToInt32(Console.ReadLine());
+    Console.Write("Connect as (S)pider or (F)rog: ");
+    var player = Console.ReadLine().ToUpper();
 
     IPEndPoint endPoint;
     IPEndPoint.TryParse(remoteAddress, out endPoint);
 
     NetcodePlayer[] players;
-    if (player == 1)
-        players = [NetcodePlayer.CreateLocal(), NetcodePlayer.CreateRemote(endPoint)];
-    else
+    if (player.StartsWith('F'))
         players = [NetcodePlayer.CreateRemote(endPoint), NetcodePlayer.CreateLocal()];
+    else
+        players = [NetcodePlayer.CreateLocal(), NetcodePlayer.CreateRemote(endPoint)];
 
     sessionBuilder
         .WithPort(port)
