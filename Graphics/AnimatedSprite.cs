@@ -57,4 +57,10 @@ public class AnimatedSprite : Sprite
             Region = _animation.Frames[_currentFrame];
         }
     }
+
+    public void Reset()
+    {
+        _elapsed = TimeSpan.Zero;
+        _currentFrame = 0;
+    }
 }
