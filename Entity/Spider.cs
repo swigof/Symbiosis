@@ -13,7 +13,8 @@ public enum SpiderMovement : byte
 {
     None,
     Going,
-    Returning
+    Returning,
+    Attacking
 }
 
 public struct Spider : IBinarySerializable
@@ -22,11 +23,14 @@ public struct Spider : IBinarySerializable
     public Vector2 Position = Home;
     public SpiderMovement Movement = SpiderMovement.None;
     public Vector2 Target = Vector2.Zero;
+    public int AttackFrame = 0;
 
     [JsonIgnore] public float Rotation = 0;
     Vector2 _direction = Vector2.Zero;
     float _movementDistanceSquared = 0;
-    AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("spider-move-animation");
+    Sprite _idle = Game1.Atlas.CreateSprite("spider-idle");
+    AnimatedSprite _moveAnimation = Game1.Atlas.CreateAnimatedSprite("spider-move-animation");
+    AnimatedSprite _attackAnimation = Game1.Atlas.CreateAnimatedSprite("spider-attack-animation");
     Sprite _homeTexture = Game1.Atlas.CreateSprite("hole");
     [JsonIgnore] public bool IsLocalPlayer = false;
     [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
@@ -38,7 +42,9 @@ public struct Spider : IBinarySerializable
     public Spider(bool isLocalPlayer)
     {
         IsLocalPlayer = isLocalPlayer;
-        _animation.CenterOrigin();
+        _idle.CenterOrigin();
+        _moveAnimation.CenterOrigin();
+        _attackAnimation.CenterOrigin();
         _homeTexture.CenterOrigin();
     }
     
@@ -64,8 +70,7 @@ public struct Spider : IBinarySerializable
             if ((Position - Home).LengthSquared() >= _movementDistanceSquared)
             {
                 Position = Target;
-                Rotation += MathHelper.Pi;
-                Movement = SpiderMovement.Returning;
+                Movement = SpiderMovement.Attacking;
             }
         }
         else if (Movement == SpiderMovement.Returning)
@@ -79,13 +84,37 @@ public struct Spider : IBinarySerializable
                 Rotation = 0;
             }
         }
+        else if (Movement == SpiderMovement.Attacking)
+        {
+            if(AttackFrame <= 15)
+                AttackFrame++;
+            else
+            {
+                AttackFrame = 0;
+                _attackAnimation.Reset();
+                Rotation += MathHelper.Pi;
+                Movement = SpiderMovement.Returning;
+            }
+        }
     }
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        _animation.Update(gameTime);
-        _animation.Rotation = Rotation;
-        _animation.Draw(spriteBatch, Position);
+        if (Movement == SpiderMovement.None)
+            _idle.Draw(spriteBatch, Position);
+        else if (Movement is SpiderMovement.Going or SpiderMovement.Returning)
+        {
+            _moveAnimation.Update(gameTime);
+            _moveAnimation.Rotation = Rotation;
+            _moveAnimation.Draw(spriteBatch, Position);
+        }
+        else if (Movement is SpiderMovement.Attacking)
+        {
+            _attackAnimation.Update(gameTime);
+            _attackAnimation.Rotation = Rotation;
+            _attackAnimation.Draw(spriteBatch, Position);
+        }
+        
         _homeTexture.Draw(spriteBatch, Home);
     }
 
@@ -96,6 +125,7 @@ public struct Spider : IBinarySerializable
         reader.Read(ref Position);
         reader.Read(ref movementByte);
         reader.Read(ref Target);
+        reader.Read(ref AttackFrame);
 
         Movement = (SpiderMovement)movementByte;
         var movementVector = Target - Home;
@@ -117,5 +147,6 @@ public struct Spider : IBinarySerializable
         writer.Write(in Position);
         writer.Write(in movementByte);
         writer.Write(in Target);
+        writer.Write(in AttackFrame);
     }
 }
