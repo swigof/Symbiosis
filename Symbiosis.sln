@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Symbiosis", "Symbiosis.cspr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameLibrary", "..\MonoGameLibrary\MonoGameLibrary.csproj", "{423A1827-348E-5A4B-8754-EB1A30396626}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Symbiosis-Advanced", "Symbiosis-Advanced\Symbiosis-Advanced.csproj", "{DC0A2EA6-B7CE-4590-897B-3198FDF289F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +26,10 @@ Global
 		{423A1827-348E-5A4B-8754-EB1A30396626}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{423A1827-348E-5A4B-8754-EB1A30396626}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{423A1827-348E-5A4B-8754-EB1A30396626}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC0A2EA6-B7CE-4590-897B-3198FDF289F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC0A2EA6-B7CE-4590-897B-3198FDF289F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC0A2EA6-B7CE-4590-897B-3198FDF289F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC0A2EA6-B7CE-4590-897B-3198FDF289F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,7 +6,7 @@ using Backdash.Serialization;
 
 namespace Symbiosis.Input;
 
-sealed class StructBinarySerializer<T> : IBinarySerializer<T> where T : unmanaged
+public sealed class StructBinarySerializer<T> : IBinarySerializer<T> where T : unmanaged
 {
     public Endianness Endianness => Platform.Endianness;
 

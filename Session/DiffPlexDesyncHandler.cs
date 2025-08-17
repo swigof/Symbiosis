@@ -9,7 +9,7 @@ namespace Symbiosis.Session;
 /// <summary>
 /// This prints the text diff of a state when a desync happens over a SyncTest session.
 /// </summary>
-sealed class DiffPlexDesyncHandler : IStateDesyncHandler
+public sealed class DiffPlexDesyncHandler : IStateDesyncHandler
 {
     public void Handle(INetcodeSession session, in StateSnapshot previous, in StateSnapshot current)
     {
