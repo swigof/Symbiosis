@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using Symbiosis.Input;
 using Symbiosis.Session;
 using System.Threading;
-using MonoGameLibrary.Graphics;
+using Symbiosis.Graphics;
 
 namespace Symbiosis;
 
