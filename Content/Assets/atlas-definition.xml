@@ -5,10 +5,10 @@
         <Region name="ant-1"           x="0"   y="0"    width="2"   height="2" />
         <Region name="ant-2"           x="2"   y="0"    width="2"   height="2" />
         <Region name="tongue"          x="8"   y="0"    width="8"   height="8" />
-        <Region name="frog-1"          x="16"  y="0"    width="16"  height="16" />
-        <Region name="frog-2"          x="32"  y="0"    width="16"  height="16" />
-        <Region name="frog-3"          x="48"  y="0"    width="16"  height="16" />
-        <Region name="frog-4"          x="64"  y="0"    width="16"  height="16" />
+        <Region name="frog-idle"       x="16"  y="0"    width="16"  height="16" />
+        <Region name="frog-move-1"     x="32"  y="0"    width="16"  height="16" />
+        <Region name="frog-move-2"     x="48"  y="0"    width="16"  height="16" />
+        <Region name="frog-move-3"     x="64"  y="0"    width="16"  height="16" />
         <Region name="spider-idle"     x="0"   y="70"   width="50"  height="54" />
         <Region name="spider-move-1"   x="0"   y="16"   width="50"  height="54" />
         <Region name="spider-move-2"   x="50"  y="16"   width="50"  height="54" />
@@ -28,12 +28,6 @@
         <Animation name="ant-move-animation" delay="200">
             <Frame region="ant-1" />
             <Frame region="ant-2" />
-        </Animation>
-        <Animation name="frog-move-animation" delay="200">
-            <Frame region="frog-1" />
-            <Frame region="frog-2" />
-            <Frame region="frog-3" />
-            <Frame region="frog-4" />
         </Animation>
         <Animation name="spider-move-animation" delay="50">
             <Frame region="spider-move-1" />
