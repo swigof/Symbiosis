@@ -34,6 +34,7 @@ public struct Frog : IBinarySerializable
     int _tongueSegmentCount = 0;
     Sprite _idle = Game1.Atlas.CreateSprite("frog-idle");
     Sprite _hop = Game1.Atlas.CreateSprite("frog-move-3");
+    AnimatedSprite _flipAnimation = Game1.Atlas.CreateAnimatedSprite("frog-flip-animation");
     Sprite _tongueSegmentTexture = Game1.Atlas.CreateSprite("tongue");
     [JsonIgnore] public bool IsLocalPlayer = false;
     [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
@@ -58,6 +59,7 @@ public struct Frog : IBinarySerializable
         IsLocalPlayer = isLocalPlayer;
         _idle.CenterOrigin();
         _hop.CenterOrigin();
+        _flipAnimation.CenterOrigin();
         _tongueSegmentTexture.CenterOrigin();
     }
 
@@ -157,6 +159,7 @@ public struct Frog : IBinarySerializable
             HopFrame++;
             if (HopFrame >= _hopFrameLength)
             {
+                _flipAnimation.Reset();
                 HopDirection = HopDirection.None;
                 HopCooldown = _hopDelay;
             }
@@ -181,6 +184,12 @@ public struct Frog : IBinarySerializable
         {
             _hop.Rotation = rotation;
             _hop.Draw(spriteBatch, Position);
+        }
+        else if (HopDirection is HopDirection.Backward)
+        {
+            _flipAnimation.Rotation = rotation;
+            _flipAnimation.Update(gameTime);
+            _flipAnimation.Draw(spriteBatch, Position);
         }
         else
         {

@@ -9,6 +9,9 @@
         <Region name="frog-move-1"     x="32"  y="0"    width="16"  height="16" />
         <Region name="frog-move-2"     x="48"  y="0"    width="16"  height="16" />
         <Region name="frog-move-3"     x="64"  y="0"    width="16"  height="16" />
+        <Region name="frog-flip-1"     x="80"  y="0"    width="16"  height="16" />
+        <Region name="frog-flip-2"     x="96"  y="0"    width="16"  height="16" />
+        <Region name="frog-flip-3"     x="112" y="0"    width="16"  height="16" />
         <Region name="spider-idle"     x="0"   y="70"   width="50"  height="54" />
         <Region name="spider-move-1"   x="0"   y="16"   width="50"  height="54" />
         <Region name="spider-move-2"   x="50"  y="16"   width="50"  height="54" />
@@ -28,6 +31,11 @@
         <Animation name="ant-move-animation" delay="200">
             <Frame region="ant-1" />
             <Frame region="ant-2" />
+        </Animation>
+        <Animation name="frog-flip-animation" delay="55">
+            <Frame region="frog-flip-1" />
+            <Frame region="frog-flip-2" />
+            <Frame region="frog-flip-3" />
         </Animation>
         <Animation name="spider-move-animation" delay="50">
             <Frame region="spider-move-1" />
