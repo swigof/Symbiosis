@@ -23,8 +23,12 @@
         <Region name="spider-attack-2" x="100" y="70"   width="50"  height="54" />
         <Region name="spider-attack-3" x="150" y="70"   width="50"  height="54" />
         <Region name="spider-attack-4" x="200" y="70"   width="50"  height="54" />
-        <Region name="snake-1"         x="0"   y="172"  width="64"  height="104" />
-        <Region name="snake-2"         x="64"  y="172"  width="64"  height="104" />
+        <Region name="snake-move-1"    x="0"   y="124"  width="64"  height="128" />
+        <Region name="snake-move-2"    x="64"  y="124"  width="64"  height="128" />
+        <Region name="snake-move-3"    x="128" y="124"  width="64"  height="128" />
+        <Region name="snake-move-4"    x="192" y="124"  width="64"  height="128" />
+        <Region name="snake-move-5"    x="256" y="124"  width="64"  height="128" />
+        <Region name="snake-move-6"    x="320" y="124"  width="64"  height="128" />
         <Region name="hole"            x="0"   y="276"  width="64"  height="64" />
     </Regions>
     <Animations>
@@ -51,9 +55,13 @@
             <Frame region="spider-attack-3" />
             <Frame region="spider-attack-4" />
         </Animation>
-        <Animation name="snake-move-animation" delay="200">
-            <Frame region="snake-1" />
-            <Frame region="snake-2" />
+        <Animation name="snake-move-animation" delay="150">
+            <Frame region="snake-move-1" />
+            <Frame region="snake-move-2" />
+            <Frame region="snake-move-3" />
+            <Frame region="snake-move-4" />
+            <Frame region="snake-move-5" />
+            <Frame region="snake-move-6" />
         </Animation>
     </Animations>
 </TextureAtlas>
