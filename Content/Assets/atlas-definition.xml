@@ -16,10 +16,10 @@
         <Region name="spider-move-4"   x="150" y="16"   width="50"  height="54" />
         <Region name="spider-move-5"   x="200" y="16"   width="50"  height="54" />
         <Region name="spider-move-6"   x="250" y="16"   width="50"  height="54" />
-        <Region name="spider-attack-1" x="0"   y="70"   width="50"  height="54" />
-        <Region name="spider-attack-2" x="50"  y="70"   width="50"  height="54" />
-        <Region name="spider-attack-3" x="100" y="70"   width="50"  height="54" />
-        <Region name="spider-attack-4" x="150" y="70"   width="50"  height="54" />
+        <Region name="spider-attack-1" x="50"  y="70"   width="50"  height="54" />
+        <Region name="spider-attack-2" x="100" y="70"   width="50"  height="54" />
+        <Region name="spider-attack-3" x="150" y="70"   width="50"  height="54" />
+        <Region name="spider-attack-4" x="200" y="70"   width="50"  height="54" />
         <Region name="snake-1"         x="0"   y="172"  width="64"  height="104" />
         <Region name="snake-2"         x="64"  y="172"  width="64"  height="104" />
         <Region name="hole"            x="0"   y="276"  width="64"  height="64" />
