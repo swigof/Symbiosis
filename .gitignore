@@ -364,4 +364,5 @@ FodyWeavers.xsd
 
 
 # Assets
-Content/Assets/
+Content/Assets/*.png
+Content/Assets/*.ttf
