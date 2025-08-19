@@ -203,8 +203,8 @@ public struct Frog : IBinarySerializable
 
     public void Reset()
     {
-        Position = new Vector2(Spider.Home.X, Spider.Home.Y - 50);
-        HopDirection = HopDirection.None;
+        Position = new Vector2(Spider.Home.X, Spider.Home.Y - 16);
+        HopDirection = HopDirection.Forward;
         HopFrame = 0;
         HopCooldown = 0;
         FacingDirection = new Vector2(0, -1);
