@@ -116,14 +116,12 @@ public class SessionGameState
             }
             for (var i = 0; i < _gameState.FrogEnemies.Length; i++)
             {
-                if(_gameState.FrogEnemies[i].Active)
-                    _gameState.FrogEnemies[i].Update(_gameState.Frog.Position, _gameState.Frog.Respawning);
-                if (_gameState.FrogEnemies[i].Dead)
-                {
-                    if (_paddedBounds.Contains(_gameState.FrogEnemies[i].Position)) continue;
-                    _gameState.FrogEnemies[i].Active = false;
-                    _gameState.NextFrogEnemyIndex = i;
-                }
+                if (!_gameState.FrogEnemies[i].Active) continue;
+                _gameState.FrogEnemies[i].Update(_gameState.Frog.Position, _gameState.Frog.Respawning);
+                if (!_gameState.FrogEnemies[i].Dead) continue;
+                if (_paddedBounds.Contains(_gameState.FrogEnemies[i].Position)) continue;
+                _gameState.FrogEnemies[i].Active = false;
+                _gameState.NextFrogEnemyIndex = i;
             }
             SpawnManager.Update(ref _gameState);
             CollisionManager.Update(ref _gameState);
