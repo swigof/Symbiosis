@@ -14,12 +14,18 @@ public struct FrogEnemy : IBinarySerializable
     public Vector2 Position = Vector2.Zero;
     public bool Active = false;
 
-    [JsonIgnore] public Circle BoundingCircle => new Circle { Center = Position, Radius = _radius };
+    [JsonIgnore] public Circle MainBoundingCircle => new Circle { Center = Position, Radius = 64 };
+    [JsonIgnore] public Circle HeadBounds => new Circle
+    {
+        Center = Position + _direction * 60, 
+        Radius = 4
+    };
     AnimatedSprite _animation = Game1.Atlas.CreateAnimatedSprite("snake-move-animation");
     float _rotation = 0;
+    Vector2 _direction = Vector2.Zero;
     
-    const int _radius = 25;
     const int _speed = 1;
+    static readonly int[] _boundingCircleOffsets = [-38, -15, 8, 31, 41];
 
     public FrogEnemy()
     {
@@ -31,14 +37,27 @@ public struct FrogEnemy : IBinarySerializable
         Active = true;
         Position = position;
     }
+    
+    public Circle[] GetBoundingCircles()
+    {
+        Circle[] circles = new Circle[_boundingCircleOffsets.Length];
+        for (var i = 0; i < circles.Length; i++)
+        {
+            circles[i] = new Circle {
+                Center = Position + _direction * _boundingCircleOffsets[i],
+                Radius = 23
+            };
+        }
+        return circles;
+    }
 
     public void Update(Vector2 frogPosition, bool isRespawning)
     {
-        var direction = Vector2.Normalize(frogPosition - Position);
+        _direction = Vector2.Normalize(frogPosition - Position);
         if (isRespawning)
-            direction *= -1;
-        Position += direction * _speed;
-        _rotation = (float) Math.Atan2(direction.X, -direction.Y);
+            _direction *= -1;
+        Position += _direction * _speed;
+        _rotation = (float) Math.Atan2(_direction.X, -_direction.Y);
     }
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)

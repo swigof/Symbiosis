@@ -35,7 +35,7 @@ public struct Spider : IBinarySerializable
     [JsonIgnore] public bool IsLocalPlayer = false;
     [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
 
-    const int _radius = 24;
+    const int _radius = 17;
     public static readonly Vector2 Home = new Vector2(Game1.ResolutionWidth/2, Game1.ResolutionHeight/2);
     public static readonly Circle HomeBoundingCircle = new Circle { Center = Home, Radius = 31 };
 
