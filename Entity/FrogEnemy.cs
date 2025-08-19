@@ -13,6 +13,8 @@ public struct FrogEnemy : IBinarySerializable
     // Game state
     public Vector2 Position = Vector2.Zero;
     public bool Active = false;
+    public bool Dead = false;
+    public Vector2 DeadDirection = Vector2.One;
 
     [JsonIgnore] public Circle MainBoundingCircle => new Circle { Center = Position, Radius = 64 };
     [JsonIgnore] public Circle HeadBounds => new Circle
@@ -36,6 +38,7 @@ public struct FrogEnemy : IBinarySerializable
     {
         Active = true;
         Position = position;
+        Dead = false;
     }
     
     public Circle[] GetBoundingCircles()
@@ -53,11 +56,19 @@ public struct FrogEnemy : IBinarySerializable
 
     public void Update(Vector2 frogPosition, bool isRespawning)
     {
-        _direction = Vector2.Normalize(frogPosition - Position);
-        if (isRespawning)
-            _direction *= -1;
-        Position += _direction * _speed;
-        _rotation = (float) Math.Atan2(_direction.X, -_direction.Y);
+        if (!Dead)
+        {
+            _direction = Vector2.Normalize(frogPosition - Position);
+            if (isRespawning)
+                _direction *= -1;
+            Position += _direction * _speed;
+            _rotation = (float)Math.Atan2(_direction.X, -_direction.Y);
+        }
+        else
+        {
+            Position += DeadDirection * 5;
+            _rotation += 0.1f;
+        }
     }
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -71,11 +82,15 @@ public struct FrogEnemy : IBinarySerializable
     {
         reader.Read(ref Position);
         reader.Read(ref Active);
+        reader.Read(ref Dead);
+        reader.Read(ref DeadDirection);
     }
 
     public void Serialize(ref readonly BinaryBufferWriter writer)
     {
         writer.Write(in Position);
         writer.Write(in Active);
+        writer.Write(in Dead);
+        writer.Write(in DeadDirection);
     }
 }

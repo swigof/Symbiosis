@@ -24,6 +24,12 @@ public class SessionGameState
     static readonly Vector2 _retryButtonPosition = new Vector2(Game1.ResolutionWidth/2f, Game1.ResolutionHeight*0.8f);
     static readonly SpriteFont _font = Game1.GameContent.Load<SpriteFont>("PublicPixel");
     static readonly Texture2D _pauseOverlay = Game1.GameContent.Load<Texture2D>("pause-overlay");
+    static readonly Rectangle _paddedBounds = new Rectangle(
+        Game1.ScreenBounds.X - 100,
+        Game1.ScreenBounds.Y - 100,
+        Game1.ScreenBounds.Width + 200,
+        Game1.ScreenBounds.Height + 200
+    );
 
     public SessionGameState(bool isLocal, int firstLocalPlayerIndex)
     {
@@ -112,6 +118,12 @@ public class SessionGameState
             {
                 if(_gameState.FrogEnemies[i].Active)
                     _gameState.FrogEnemies[i].Update(_gameState.Frog.Position, _gameState.Frog.Respawning);
+                if (_gameState.FrogEnemies[i].Dead)
+                {
+                    if (_paddedBounds.Contains(_gameState.FrogEnemies[i].Position)) continue;
+                    _gameState.FrogEnemies[i].Active = false;
+                    _gameState.NextFrogEnemyIndex = i;
+                }
             }
             SpawnManager.Update(ref _gameState);
             CollisionManager.Update(ref _gameState);

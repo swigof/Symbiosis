@@ -56,8 +56,9 @@ public static class CollisionManager
             for (var j = 0; j < boundingCircles.Length; j++)
             {
                 if (!boundingCircles[j].Intersects(spiderBounds)) continue;
-                gamestate.FrogEnemies[i].Active = false;
-                gamestate.NextFrogEnemyIndex = i;
+                gamestate.FrogEnemies[i].Dead = true;
+                var direction = Vector2.Normalize(gamestate.FrogEnemies[i].Position - Spider.Home);
+                gamestate.FrogEnemies[i].DeadDirection = direction;
                 return;
             }
         }
@@ -67,7 +68,7 @@ public static class CollisionManager
     {
         for (var i = 0; i < gamestate.FrogEnemies.Length; i++)
         {
-            if (!gamestate.FrogEnemies[i].Active) continue;
+            if (!gamestate.FrogEnemies[i].Active || gamestate.FrogEnemies[i].Dead) continue;
             if (!gamestate.FrogEnemies[i].HeadBounds.Intersects(gamestate.Frog.BoundingCircle)) continue;
             gamestate.Frog.Respawning = true;
         }
