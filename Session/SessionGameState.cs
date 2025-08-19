@@ -19,11 +19,9 @@ public class SessionGameState
 
     float _endTextScale = 0;
     Vector2 _endTextPosition = new Vector2(Game1.ResolutionWidth / 2f, 0); 
-    Button _retryButton;
+    Menu _menu;
 
-    static readonly Vector2 _retryButtonPosition = new Vector2(Game1.ResolutionWidth/2f, Game1.ResolutionHeight*0.8f);
     static readonly SpriteFont _font = Game1.GameContent.Load<SpriteFont>("PublicPixel");
-    static readonly Texture2D _pauseOverlay = Game1.GameContent.Load<Texture2D>("pause-overlay");
     static readonly Rectangle _paddedBounds = new Rectangle(
         Game1.ScreenBounds.X - 100,
         Game1.ScreenBounds.Y - 100,
@@ -44,8 +42,7 @@ public class SessionGameState
             _gameState.Spider = new Spider(firstLocalPlayerIndex == 0);
             _gameState.Frog = new Frog(firstLocalPlayerIndex == 1);
         }
-
-        _retryButton = new Button(_retryButtonPosition, "Retry", Reset);
+        _menu = new Menu(Reset, ToggleCredits, Resume);
     }
 
     // Not thread protected. Not guaranteed to be state alligned. 
@@ -69,6 +66,33 @@ public class SessionGameState
         }
     }
 
+    private void ToggleCredits(object sender, EventArgs e)
+    {
+        _stateMutex.WaitOne();
+        try
+        {
+            _gameState.ShowCredits = !_gameState.ShowCredits;
+        }
+        finally
+        {
+            _stateMutex.ReleaseMutex();
+        }
+    }
+
+    private void Resume(object sender, EventArgs e)
+    {
+        _stateMutex.WaitOne();
+        try
+        {
+            _gameState.Paused = false;
+            _gameState.ShowCredits = false;
+        }
+        finally
+        {
+            _stateMutex.ReleaseMutex();
+        }
+    }
+
     public void Update(ReadOnlySpan<SynchronizedInput<PlayerInputs>> inputs)
     {
         _stateMutex.WaitOne();
@@ -78,7 +102,7 @@ public class SessionGameState
 
             if (_gameState.EndedOnFrame != 0)
             {
-                _retryButton.Update(inputs[0].Input, _gameState.PreviousInputs[0], ref _gameState.RetryButtonState);
+                _menu.Update(inputs[0].Input, ref _gameState);
                 var endFrame = _gameState.FrameNumber - _gameState.EndedOnFrame;
                 if (endFrame > 60) return;
                 _endTextPosition.Y = MathHelper.CatmullRom(
@@ -102,7 +126,7 @@ public class SessionGameState
 
             if (_gameState.Paused)
             {
-                _retryButton.Update(inputs[0].Input, _gameState.PreviousInputs[0], ref _gameState.RetryButtonState);
+                _menu.Update(inputs[0].Input, ref _gameState);
                 return;
             }
 
@@ -193,10 +217,7 @@ public class SessionGameState
             spriteBatch.DrawString(_font, scoreText, Spider.Home - textSize / 2, Color.White);
             
             if (_gameState.Paused || _gameState.EndedOnFrame != 0)
-            {
-                spriteBatch.Draw(_pauseOverlay, Game1.ScreenBounds, Color.White);
-                _retryButton.Draw(spriteBatch, _gameState.RetryButtonState);
-            }
+                _menu.Draw(spriteBatch, _gameState);
         }
         finally
         {
