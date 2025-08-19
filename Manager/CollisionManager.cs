@@ -46,6 +46,7 @@ public static class CollisionManager
     private static void CheckSpider(ref GameState gamestate)
     {
         if (gamestate.Spider.Movement != SpiderMovement.Attacking) return;
+        if (gamestate.Spider.AttackFrame != 10) return;
         var spiderBounds = gamestate.Spider.BoundingCircle;
         for (var i = 0; i < gamestate.FrogEnemies.Length; i++)
         {
