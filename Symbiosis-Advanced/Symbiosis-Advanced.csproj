@@ -12,4 +12,13 @@
       <ProjectReference Include="..\Symbiosis.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Include="Icon.bmp">
+        <LogicalName>Icon.bmp</LogicalName>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Icon.ico">
+        <LogicalName>Icon.ico</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>
