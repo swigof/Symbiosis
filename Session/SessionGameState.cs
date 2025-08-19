@@ -119,7 +119,10 @@ public class SessionGameState
                 if (_gameState.PreviousInputs[i].DigitalInputs.HasFlag(DigitalInputs.Escape) &&
                     !inputs[i].Input.DigitalInputs.HasFlag(DigitalInputs.Escape))
                 {
-                    _gameState.Paused = !_gameState.Paused;
+                    if (_gameState.ShowCredits && _gameState.Paused)
+                        _gameState.ShowCredits = false;
+                    else
+                        _gameState.Paused = !_gameState.Paused;
                     break;
                 }
             }
