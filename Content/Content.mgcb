@@ -19,6 +19,9 @@
 #begin Assets/button.png
 /copy:Assets/button.png
 
+#begin Assets/credits.txt
+/copy:Assets/credits.txt
+
 #begin Assets/cursor_none.png
 /copy:Assets/cursor_none.png
 
