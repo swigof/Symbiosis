@@ -26,10 +26,12 @@ public struct Frog : IBinarySerializable
     public byte HopFrame = 0;
     public byte HopCooldown = 0;
     public Vector2 FacingDirection = new Vector2(0, -1);
+    public float Rotation = 0f; 
     public bool Tonguing = false;
     public byte TongueFrame = 0;
     public bool Respawning = false;
     public byte RespawnFrame = 0;
+    public Vector2 DeadDirection = Vector2.One;
 
     int _tongueSegmentCount = 0;
     Sprite _idle = Game1.Atlas.CreateSprite("frog-idle");
@@ -67,16 +69,16 @@ public struct Frog : IBinarySerializable
     {
         if (Respawning)
         {
-            if (RespawnFrame == 0)
-                Reset();
+            Position += DeadDirection * 5;
+            Rotation += 0.5f;
             RespawnFrame++;
             if (RespawnFrame == _respawnFrameLength)
             {
+                Reset();
                 Respawning = false;
                 RespawnFrame = 0;
             }
-            else
-                return;
+            return;
         }
         
         if (HopDirection == HopDirection.None && !Tonguing)
@@ -141,11 +143,13 @@ public struct Frog : IBinarySerializable
                 else if (HopDirection == HopDirection.Left)
                 {
                     FacingDirection.Rotate(-_hopFrameRotation);
+                    Rotation = (float) Math.Atan2(FacingDirection.X, -FacingDirection.Y);
                     Position += distance * FacingDirection;
                 }
                 else if (HopDirection == HopDirection.Right)
                 {
                     FacingDirection.Rotate(_hopFrameRotation);
+                    Rotation = (float) Math.Atan2(FacingDirection.X, -FacingDirection.Y);
                     Position += distance * FacingDirection;
                 }
                 else if (HopDirection == HopDirection.Backward)
@@ -153,6 +157,7 @@ public struct Frog : IBinarySerializable
                     if (HopFrame == _hopFrameLength / 2)
                     {
                         FacingDirection.Rotate(MathHelper.Pi);
+                        Rotation = (float) Math.Atan2(FacingDirection.X, -FacingDirection.Y);
                     }
                 }
             }
@@ -172,28 +177,26 @@ public struct Frog : IBinarySerializable
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        if (Respawning) return;
-        var rotation = (float) Math.Atan2(FacingDirection.X, -FacingDirection.Y);
         foreach (var circle in GetTongueBoundingCircles())
         {
-            _tongueSegmentTexture.Rotation = rotation;
+            _tongueSegmentTexture.Rotation = Rotation;
             _tongueSegmentTexture.Draw(spriteBatch, circle.Center);
         }
 
         if (HopDirection is HopDirection.Forward or HopDirection.Left or HopDirection.Right)
         {
-            _hop.Rotation = rotation;
+            _hop.Rotation = Rotation;
             _hop.Draw(spriteBatch, Position);
         }
         else if (HopDirection is HopDirection.Backward)
         {
-            _flipAnimation.Rotation = rotation;
+            _flipAnimation.Rotation = Rotation;
             _flipAnimation.Update(gameTime);
             _flipAnimation.Draw(spriteBatch, Position);
         }
         else
         {
-            _idle.Rotation = rotation;
+            _idle.Rotation = Rotation;
             _idle.Draw(spriteBatch, Position);
         }
     }
@@ -205,6 +208,7 @@ public struct Frog : IBinarySerializable
         HopFrame = 0;
         HopCooldown = 0;
         FacingDirection = new Vector2(0, -1);
+        Rotation = 0;
         Tonguing = false;
         TongueFrame = 0;
         _tongueSegmentCount = 0;
@@ -234,8 +238,10 @@ public struct Frog : IBinarySerializable
         reader.Read(ref Tonguing);
         reader.Read(ref TongueFrame);
         reader.Read(ref FacingDirection);
+        reader.Read(ref Rotation);
         reader.Read(ref Respawning);
         reader.Read(ref RespawnFrame);
+        reader.Read(ref DeadDirection);
 
         HopDirection = (HopDirection)hopDirectionByte;
     }
@@ -251,7 +257,9 @@ public struct Frog : IBinarySerializable
         writer.Write(in Tonguing);
         writer.Write(in TongueFrame);
         writer.Write(in FacingDirection);
+        writer.Write(in Rotation);
         writer.Write(in Respawning);
         writer.Write(in RespawnFrame);
+        writer.Write(in DeadDirection);
     }
 }

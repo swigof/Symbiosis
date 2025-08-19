@@ -70,7 +70,10 @@ public static class CollisionManager
         {
             if (!gamestate.FrogEnemies[i].Active || gamestate.FrogEnemies[i].Dead) continue;
             if (!gamestate.FrogEnemies[i].HeadBounds.Intersects(gamestate.Frog.BoundingCircle)) continue;
+            var direction = Vector2.Normalize(gamestate.Frog.Position - gamestate.FrogEnemies[i].Position);
             gamestate.Frog.Respawning = true;
+            gamestate.Frog.DeadDirection = direction;
+            return;
         }
     }
 
