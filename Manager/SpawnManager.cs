@@ -105,23 +105,27 @@ public static class SpawnManager
 
     private static Vector2 GetRandomPositionJustOutsideScreen(int padding)
     {
-        var width = Game1.ScreenBounds.Width + padding;
-        var height = Game1.ScreenBounds.Height + padding;
+        var width = Game1.ScreenBounds.Width + padding * 2;
+        var height = Game1.ScreenBounds.Height + padding * 2;
         var perimeterPoint = Game1.Random.NextInt(0, width * 2 + height * 2);
+        Vector2 position;
         if (perimeterPoint < width + height)
         {
             if (perimeterPoint < width)
-                return new Vector2(perimeterPoint - padding, -padding);
+                position = new Vector2(perimeterPoint, 0);
             else
-                return new Vector2(width - padding, perimeterPoint - width - padding);
+                position = new Vector2(width, perimeterPoint - width);
         }
         else
         {
             perimeterPoint = perimeterPoint - (width + height);
             if (perimeterPoint < width)
-                return new Vector2(width - perimeterPoint - padding, height - padding);
+                position = new Vector2(width - perimeterPoint, height);
             else
-                return new Vector2(-padding, height - (perimeterPoint - width) - padding);
+                position = new Vector2(0, height - (perimeterPoint - width));
         }
+        position.X -= padding;
+        position.Y -= padding;
+        return position;
     }
 }
