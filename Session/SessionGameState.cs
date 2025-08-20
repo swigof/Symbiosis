@@ -111,6 +111,19 @@ public class SessionGameState
         }
     }
 
+    public void OnPeerEvent(NetcodePlayer player, PeerEventInfo evt)
+    {
+        _stateMutex.WaitOne();
+        try
+        {
+            _gameState.ConnectionEvent = evt.Type;
+        }
+        finally
+        {
+            _stateMutex.ReleaseMutex();
+        }
+    }
+
     public void Update(ReadOnlySpan<SynchronizedInput<PlayerInputs>> inputs)
     {
         _stateMutex.WaitOne();
@@ -253,12 +266,38 @@ public class SessionGameState
             
             for (int i = 0; i < _shrubAreas.Length; i++)
                 spriteBatch.Draw(_shrubsTexture, _shrubAreas[i], _shrubAreas[i], Color.White);
+            DrawConnectionMessage(spriteBatch, _gameState.ConnectionEvent);
             if (!IsLocalCursorPlayer())
                 spriteBatch.Draw(_cursorTexture, _remoteCursorPosition, null, QuarterTransparent);
         }
         finally
         {
             _stateMutex.ReleaseMutex();
+        }
+    }
+    
+    public void DrawConnectionMessage(SpriteBatch spriteBatch, PeerEvent evt)
+    {
+        switch (evt)
+        {
+            case PeerEvent.Connected:
+                break;
+            case PeerEvent.Synchronizing:
+                spriteBatch.DrawString(_font, "Synchronizing", Vector2.Zero, Color.Red);
+                break;
+            case PeerEvent.Synchronized:
+                break;
+            case PeerEvent.ConnectionInterrupted:
+                spriteBatch.DrawString(_font, "Connection Interrupted", Vector2.Zero, Color.Red);
+                break;
+            case PeerEvent.ConnectionResumed:
+                break;
+            case PeerEvent.Disconnected:
+                spriteBatch.DrawString(_font, "Disconnected", Vector2.Zero, Color.Red);
+                break;
+            case PeerEvent.SynchronizationFailure:
+                spriteBatch.DrawString(_font, "Synchronization Failure", Vector2.Zero, Color.Red);
+                break;
         }
     }
 

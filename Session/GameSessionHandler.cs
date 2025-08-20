@@ -99,10 +99,7 @@ public class GameSessionHandler : INetcodeSessionHandler, IDisposable
         _session.AdvanceFrame(); 
     }
 
-    public void OnPeerEvent(NetcodePlayer player, PeerEventInfo evt)
-    {
-        //throw new NotImplementedException();
-    }
+    public void OnPeerEvent(NetcodePlayer player, PeerEventInfo evt) => SessionGameState.OnPeerEvent(player, evt);
 
     public void OnSessionClose()
     {

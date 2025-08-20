@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Backdash;
 using Backdash.Serialization;
 using Symbiosis.Entity;
 using Symbiosis.Input;
@@ -27,6 +28,7 @@ public struct GameState : IBinarySerializable
     public ButtonState CreditsButtonState = new ButtonState();
     public ButtonState BackButtonState = new ButtonState();
     public bool ShowCredits = false;
+    public PeerEvent ConnectionEvent = new PeerEvent();
 
     [JsonIgnore] public bool RoundLost => EndedOnFrame > 0 && EggCount <= 0; 
     [JsonIgnore] public bool RoundWon => EndedOnFrame > 0 && EggCount > 0; 
@@ -43,6 +45,8 @@ public struct GameState : IBinarySerializable
 
     public void Deserialize(ref readonly BinaryBufferReader reader)
     {
+        sbyte connectionEventByte = 0;
+
         reader.Read(ref FrameNumber);
         reader.Read(ref Spider);
         reader.Read(ref Frog);
@@ -63,10 +67,15 @@ public struct GameState : IBinarySerializable
         reader.Read(ref CreditsButtonState);
         reader.Read(ref BackButtonState);
         reader.Read(ref ShowCredits);
+        reader.Read(ref connectionEventByte);
+
+        ConnectionEvent = (PeerEvent)connectionEventByte;
     }
 
     public void Serialize(ref readonly BinaryBufferWriter writer)
     {
+        sbyte connectionEventByte = (sbyte)ConnectionEvent;
+        
         writer.Write(in FrameNumber);
         writer.Write(in Spider);
         writer.Write(in Frog);
@@ -87,5 +96,6 @@ public struct GameState : IBinarySerializable
         writer.Write(in CreditsButtonState);
         writer.Write(in BackButtonState);
         writer.Write(in ShowCredits);
+        writer.Write(in connectionEventByte);
     }
 }
