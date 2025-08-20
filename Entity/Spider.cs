@@ -56,6 +56,7 @@ public struct Spider : IBinarySerializable
                 var movementVector = Target - Home;
                 _movementDistanceSquared = movementVector.LengthSquared();
                 _direction = Vector2.Normalize(movementVector);
+                Target -= _direction * 10;
                 Rotation = (float)Math.Atan2(_direction.X, -_direction.Y);
             }
         }
