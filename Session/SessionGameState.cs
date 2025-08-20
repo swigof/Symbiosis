@@ -207,40 +207,6 @@ public class SessionGameState
             
             _homeTexture.Draw(spriteBatch, Spider.Home);
             
-            if (_gameState.RoundLost)
-            {
-                var loseText = "FAILURE";
-                Vector2 loseTextSize = _font.MeasureString(loseText);
-                spriteBatch.DrawString(
-                    _font, 
-                    loseText, 
-                    _endTextPosition, 
-                    Color.Red, 
-                    0, 
-                    loseTextSize / 2, 
-                    _endTextScale, 
-                    SpriteEffects.None, 
-                    0
-                );
-            }
-            
-            if (_gameState.RoundWon)
-            {
-                var winText = "SUCCESS";
-                Vector2 winTextSize = _font.MeasureString(winText);
-                spriteBatch.DrawString(
-                    _font, 
-                    winText, 
-                    _endTextPosition, 
-                    Color.Green, 
-                    0, 
-                    winTextSize / 2,
-                    _endTextScale, 
-                    SpriteEffects.None, 
-                    0
-                );
-            }
-            
             if (_gameState.Paused || _gameState.EndedOnFrame != 0)
                 gameTime.ElapsedGameTime = new TimeSpan(0);
             
@@ -260,6 +226,39 @@ public class SessionGameState
             var scoreText = _gameState.EggCount.ToString();
             Vector2 textSize = _font.MeasureString(scoreText);
             spriteBatch.DrawString(_font, scoreText, Spider.Home - textSize / 2, Color.White);
+            
+            if (_gameState.RoundLost)
+            {
+                var loseText = "FAILURE";
+                Vector2 loseTextSize = _font.MeasureString(loseText);
+                spriteBatch.DrawString(
+                    _font, 
+                    loseText, 
+                    _endTextPosition, 
+                    Color.Red, 
+                    0, 
+                    loseTextSize / 2, 
+                    _endTextScale, 
+                    SpriteEffects.None, 
+                    0
+                );
+            }
+            if (_gameState.RoundWon)
+            {
+                var winText = "SUCCESS";
+                Vector2 winTextSize = _font.MeasureString(winText);
+                spriteBatch.DrawString(
+                    _font, 
+                    winText, 
+                    _endTextPosition, 
+                    Color.Green, 
+                    0, 
+                    winTextSize / 2,
+                    _endTextScale, 
+                    SpriteEffects.None, 
+                    0
+                );
+            }
             
             if (_gameState.Paused || _gameState.EndedOnFrame != 0)
                 _menu.Draw(spriteBatch, _gameState);
