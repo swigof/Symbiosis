@@ -6,6 +6,7 @@ using Symbiosis.Input;
 using System;
 using System.Threading;
 using Microsoft.Xna.Framework;
+using Symbiosis.Graphics;
 using Symbiosis.Manager;
 using Symbiosis.UI;
 
@@ -28,6 +29,7 @@ public class SessionGameState
         Game1.ScreenBounds.Width + 200,
         Game1.ScreenBounds.Height + 200
     );
+    static readonly Sprite _homeTexture = Game1.Atlas.CreateSprite("hole");
 
     public SessionGameState(bool isLocal, int firstLocalPlayerIndex)
     {
@@ -42,6 +44,7 @@ public class SessionGameState
             _gameState.Spider = new Spider(firstLocalPlayerIndex == 0);
             _gameState.Frog = new Frog(firstLocalPlayerIndex == 1);
         }
+        _homeTexture.CenterOrigin();
         _menu = new Menu(Reset, ToggleCredits, Resume);
     }
 
@@ -166,6 +169,8 @@ public class SessionGameState
         _stateMutex.WaitOne();
         try
         {
+            _homeTexture.Draw(spriteBatch, Spider.Home);
+            
             if (_gameState.RoundLost)
             {
                 var loseText = "FAILURE";

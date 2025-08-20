@@ -7,6 +7,8 @@ namespace Symbiosis.Manager;
 // Should only be used with a safely locked gamestate
 public static class CollisionManager
 {
+    static readonly Circle _homeBoundingCircle = new Circle { Center = Spider.Home, Radius = 31 };
+
     public static void Update(ref GameState gamestate)
     {
         CheckFrogTongue(ref gamestate);
@@ -82,13 +84,13 @@ public static class CollisionManager
         for (var i = 0; i < gamestate.Clusters.Length; i++)
         {
             if (!gamestate.Clusters[i].Active) continue;
-            if (!gamestate.Clusters[i].BoundingCircle.Intersects(Spider.HomeBoundingCircle)) continue;
+            if (!gamestate.Clusters[i].BoundingCircle.Intersects(_homeBoundingCircle)) continue;
             var eggEnemyBounds = gamestate.Clusters[i].GetEggEnemyBoundingCircles();
             var hasActive = false;
             for (var j = 0; j < gamestate.Clusters[i].EggEnemies.Length; j++)
             {
                 if (!gamestate.Clusters[i].EggEnemies[j].Active) continue;
-                if (eggEnemyBounds[j].Intersects(Spider.HomeBoundingCircle))
+                if (eggEnemyBounds[j].Intersects(_homeBoundingCircle))
                 {
                     gamestate.Clusters[i].EggEnemies[j].Active = false;
                     gamestate.EggCount--;

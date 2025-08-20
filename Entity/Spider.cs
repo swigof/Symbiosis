@@ -31,13 +31,11 @@ public struct Spider : IBinarySerializable
     Sprite _idle = Game1.Atlas.CreateSprite("spider-idle");
     AnimatedSprite _moveAnimation = Game1.Atlas.CreateAnimatedSprite("spider-move-animation");
     AnimatedSprite _attackAnimation = Game1.Atlas.CreateAnimatedSprite("spider-attack-animation");
-    Sprite _homeTexture = Game1.Atlas.CreateSprite("hole");
     [JsonIgnore] public bool IsLocalPlayer = false;
     [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
 
     const int _radius = 17;
     public static readonly Vector2 Home = new Vector2(Game1.ResolutionWidth/2, Game1.ResolutionHeight/2);
-    public static readonly Circle HomeBoundingCircle = new Circle { Center = Home, Radius = 31 };
 
     public Spider(bool isLocalPlayer)
     {
@@ -45,7 +43,6 @@ public struct Spider : IBinarySerializable
         _idle.CenterOrigin();
         _moveAnimation.CenterOrigin();
         _attackAnimation.CenterOrigin();
-        _homeTexture.CenterOrigin();
     }
     
     public void Update(PlayerInputs inputs)
@@ -114,8 +111,6 @@ public struct Spider : IBinarySerializable
             _attackAnimation.Rotation = Rotation;
             _attackAnimation.Draw(spriteBatch, Position);
         }
-        
-        _homeTexture.Draw(spriteBatch, Home);
     }
 
     public void Deserialize(ref readonly BinaryBufferReader reader)
