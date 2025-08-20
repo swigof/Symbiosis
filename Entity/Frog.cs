@@ -71,6 +71,7 @@ public struct Frog : IBinarySerializable
         {
             Position += DeadDirection * 5;
             Rotation += 0.5f;
+            FacingDirection.Rotate(0.5f);
             RespawnFrame++;
             if (RespawnFrame == _respawnFrameLength)
             {
