@@ -50,7 +50,7 @@
             <Frame region="spider-move-5" />
             <Frame region="spider-move-6" />
         </Animation>
-        <Animation name="spider-attack-animation" delay="50">
+        <Animation name="spider-attack-animation" delay="60">
             <Frame region="spider-attack-1" />
             <Frame region="spider-attack-2" />
             <Frame region="spider-attack-3" />
