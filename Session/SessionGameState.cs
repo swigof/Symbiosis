@@ -21,6 +21,7 @@ public class SessionGameState
     float _endTextScale = 0;
     Vector2 _endTextPosition = new Vector2(Game1.ResolutionWidth / 2f, 0); 
     Menu _menu;
+    Vector2 _remoteCursorPosition = Vector2.Zero;
 
     static readonly SpriteFont _font = Game1.GameContent.Load<SpriteFont>("PublicPixel");
     static readonly Rectangle _paddedBounds = new Rectangle(
@@ -30,6 +31,19 @@ public class SessionGameState
         Game1.ScreenBounds.Height + 200
     );
     static readonly Sprite _homeTexture = Game1.Atlas.CreateSprite("hole");
+    static readonly Sprite _homeShadowTexture = Game1.Atlas.CreateSprite("hole-shadow");
+    static readonly Rectangle _grassArea = Game1.ScreenBounds;
+    static readonly Rectangle[] _shrubAreas =
+    {
+        new Rectangle(0, 0, Game1.ResolutionWidth, 32),
+        new Rectangle(0, 0, 32, Game1.ResolutionHeight),
+        new Rectangle(Game1.ResolutionWidth - 32, 0, 32, Game1.ResolutionHeight),
+        new Rectangle(0, Game1.ResolutionHeight - 32, Game1.ResolutionWidth, 32)
+    };
+    static readonly Texture2D _cursorTexture = Game1.GameContent.Load<Texture2D>("cursor_none");
+    static readonly Texture2D _grassTexture = Game1.GameContent.Load<Texture2D>("grass");
+    static readonly Texture2D _shrubsTexture = Game1.GameContent.Load<Texture2D>("shrub");
+    static readonly Color QuarterTransparent = new Color(255, 255, 255, 255 / 4);
 
     public SessionGameState(bool isLocal, int firstLocalPlayerIndex)
     {
@@ -45,6 +59,7 @@ public class SessionGameState
             _gameState.Frog = new Frog(firstLocalPlayerIndex == 1);
         }
         _homeTexture.CenterOrigin();
+        _homeShadowTexture.CenterOrigin();
         _menu = new Menu(Reset, ToggleCredits, Resume);
     }
 
@@ -101,6 +116,12 @@ public class SessionGameState
         _stateMutex.WaitOne();
         try
         {
+            if (!IsLocalCursorPlayer())
+            {
+                _remoteCursorPosition.X = inputs[0].Input.CursorPosition.X;
+                _remoteCursorPosition.Y = inputs[0].Input.CursorPosition.Y;
+            }
+            
             _gameState.FrameNumber++;
 
             if (_gameState.EndedOnFrame != 0)
@@ -169,6 +190,8 @@ public class SessionGameState
         _stateMutex.WaitOne();
         try
         {
+            spriteBatch.Draw(_grassTexture, _grassArea, _grassArea, Color.White);
+            
             _homeTexture.Draw(spriteBatch, Spider.Home);
             
             if (_gameState.RoundLost)
@@ -220,12 +243,18 @@ public class SessionGameState
                     _gameState.FrogEnemies[i].Draw(spriteBatch, gameTime);
             }
             _gameState.Spider.Draw(spriteBatch, gameTime);
+            _homeShadowTexture.Draw(spriteBatch, Spider.Home);
             var scoreText = _gameState.EggCount.ToString();
             Vector2 textSize = _font.MeasureString(scoreText);
             spriteBatch.DrawString(_font, scoreText, Spider.Home - textSize / 2, Color.White);
             
             if (_gameState.Paused || _gameState.EndedOnFrame != 0)
                 _menu.Draw(spriteBatch, _gameState);
+            
+            for (int i = 0; i < _shrubAreas.Length; i++)
+                spriteBatch.Draw(_shrubsTexture, _shrubAreas[i], _shrubAreas[i], Color.White);
+            if (!IsLocalCursorPlayer())
+                spriteBatch.Draw(_cursorTexture, _remoteCursorPosition, null, QuarterTransparent);
         }
         finally
         {
