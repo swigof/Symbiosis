@@ -54,13 +54,11 @@ public struct FrogEnemy : IBinarySerializable
         return circles;
     }
 
-    public void Update(Vector2 frogPosition, bool isRespawning)
+    public void Update(Vector2 frogPosition)
     {
         if (!Dead)
         {
             _direction = Vector2.Normalize(frogPosition - Position);
-            if (isRespawning)
-                _direction *= -1;
             Position += _direction * _speed;
             _rotation = (float)Math.Atan2(_direction.X, -_direction.Y);
         }

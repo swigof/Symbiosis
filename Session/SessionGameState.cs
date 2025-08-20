@@ -168,7 +168,7 @@ public class SessionGameState
             for (var i = 0; i < _gameState.FrogEnemies.Length; i++)
             {
                 if (!_gameState.FrogEnemies[i].Active) continue;
-                _gameState.FrogEnemies[i].Update(_gameState.Frog.Position, _gameState.Frog.Respawning);
+                _gameState.FrogEnemies[i].Update(_gameState.Frog.Position);
                 if (!_gameState.FrogEnemies[i].Dead) continue;
                 if (_paddedBounds.Contains(_gameState.FrogEnemies[i].Position)) continue;
                 _gameState.FrogEnemies[i].Active = false;
