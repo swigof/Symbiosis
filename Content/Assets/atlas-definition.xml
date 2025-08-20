@@ -30,6 +30,7 @@
         <Region name="snake-move-5"    x="256" y="124"  width="64"  height="128" />
         <Region name="snake-move-6"    x="320" y="124"  width="64"  height="128" />
         <Region name="hole"            x="0"   y="253"  width="128" height="128" />
+        <Region name="hole-shadow"     x="128" y="253"  width="128" height="128" />
     </Regions>
     <Animations>
         <Animation name="ant-move-animation" delay="200">
