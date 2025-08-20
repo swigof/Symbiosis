@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using Symbiosis.Input;
 using Symbiosis.Session;
 using System.Threading;
+using Microsoft.Xna.Framework.Media;
 using Symbiosis.Graphics;
 
 namespace Symbiosis;
@@ -92,6 +93,8 @@ public class Game1 : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         Mouse.SetCursor(MouseCursor.FromTexture2D(GameContent.Load<Texture2D>("cursor_none"), 0, 0));
         Atlas = TextureAtlas.FromFile(Content, "atlas-definition.xml");
+        MediaPlayer.IsRepeating = true;
+        MediaPlayer.Play( Content.Load<Song>("Forest_Ambience"));
     }
 
     protected override void Update(GameTime gameTime)

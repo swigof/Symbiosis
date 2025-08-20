@@ -25,6 +25,12 @@
 #begin Assets/cursor_none.png
 /copy:Assets/cursor_none.png
 
+#begin Assets/Forest_Ambience.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Assets/Forest_Ambience.mp3
+
 #begin Assets/grass.png
 /copy:Assets/grass.png
 

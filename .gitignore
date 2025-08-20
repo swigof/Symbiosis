@@ -366,5 +366,6 @@ FodyWeavers.xsd
 # Assets
 Content/Assets/*.png
 Content/Assets/*.ttf
+Content/Assets/*.mp3
 **/Icon.bmp
 **/Icon.ico
