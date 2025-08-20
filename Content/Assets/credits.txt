@@ -10,13 +10,15 @@ Buttons
 Tiny RPG - Dragon Regalia GUI by tiopalada on OpenGameArt
 Licensed under CC0
 
-Frog (Modified)
+Frog
 Pixel Tree Frog Sprite by ieppei on OpenGameArt
 Licensed under CC0
+Modified for additional animation frames and color changes
 
-Snake (Modified)
+Snake
 Snake low poly animated 3d model by methodical pixel on OpenGameArt
 Licensed under CC0
+Modified by baking down to a 2D texture and scaling
 
 Icon
 Pixel Frog (16*16) by scriptoy on OpenGameArt
@@ -25,3 +27,8 @@ Licensed under CC0
 Spider
 Spider Pixel Art Character by sanctumpixel on itch.io
 Licensed via purchase
+
+Anything else
+swigof
+
+Made with Monogame, Backdash, GIMP, and Blender.
