@@ -90,7 +90,7 @@ public struct Frog : IBinarySerializable
         {
             if (inputs.DigitalInputs.HasFlag(DigitalInputs.Action))
             {
-                _tongueSound.Play();
+                _tongueSound.Play(0.5f, 0, 0);
                 Tonguing = true;
                 TongueFrame = 0;
             }
@@ -174,7 +174,7 @@ public struct Frog : IBinarySerializable
             {
                 _flipAnimation.Reset();
                 HopDirection = HopDirection.None;
-                _hopSound.Play();
+                _hopSound.Play(0.5f, 0, 0);
                 HopCooldown = _hopDelay;
             }
         }
