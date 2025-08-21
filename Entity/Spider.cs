@@ -53,10 +53,10 @@ public struct Spider : IBinarySerializable
             {
                 Movement = SpiderMovement.Going;
                 Target = new Vector2(inputs.CursorPosition.X, inputs.CursorPosition.Y);
+                Target -= Vector2.Normalize(Target - Home) * 10;
                 var movementVector = Target - Home;
                 _movementDistanceSquared = movementVector.LengthSquared();
                 _direction = Vector2.Normalize(movementVector);
-                Target -= _direction * 10;
                 Rotation = (float)Math.Atan2(_direction.X, -_direction.Y);
             }
         }
