@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Symbiosis.Input;
 using System;
 using System.Text.Json.Serialization;
+using Microsoft.Xna.Framework.Audio;
 using Symbiosis.Graphics;
 using static Symbiosis.Manager.CollisionManager;
 
@@ -38,6 +39,9 @@ public struct Frog : IBinarySerializable
     Sprite _hop = Game1.Atlas.CreateSprite("frog-move-3");
     AnimatedSprite _flipAnimation = Game1.Atlas.CreateAnimatedSprite("frog-flip-animation");
     Sprite _tongueSegmentTexture = Game1.Atlas.CreateSprite("tongue");
+    SoundEffect _hopSound = Game1.GameContent.Load<SoundEffect>("hop");
+    SoundEffect _tongueSound = Game1.GameContent.Load<SoundEffect>("tongue");
+    SoundEffect _slurpSound = Game1.GameContent.Load<SoundEffect>("slurp");
     [JsonIgnore] public bool IsLocalPlayer = false;
     [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
     [JsonIgnore] public Circle TongueBoundingCircle =>
@@ -86,6 +90,7 @@ public struct Frog : IBinarySerializable
         {
             if (inputs.DigitalInputs.HasFlag(DigitalInputs.Action))
             {
+                _tongueSound.Play();
                 Tonguing = true;
                 TongueFrame = 0;
             }
@@ -122,6 +127,8 @@ public struct Frog : IBinarySerializable
             }
             else
             {
+                if (TongueFrame == _tongueExtendFrameLength)
+                    _slurpSound.Play();
                 _tongueSegmentCount = _tongueExtendFrameLength - ((TongueFrame - _tongueExtendFrameLength) / 2);
             }
 
@@ -167,6 +174,7 @@ public struct Frog : IBinarySerializable
             {
                 _flipAnimation.Reset();
                 HopDirection = HopDirection.None;
+                _hopSound.Play();
                 HopCooldown = _hopDelay;
             }
         }
