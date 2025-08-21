@@ -57,10 +57,13 @@ public struct Spider : IBinarySerializable
         {
             if (inputs.DigitalInputs.HasFlag(DigitalInputs.Click))
             {
+                var newTarget = new Vector2(inputs.CursorPosition.X, inputs.CursorPosition.Y);
+                if (newTarget == Home) return;
+                newTarget -= Vector2.Normalize(newTarget - Home) * 10;
+                if (newTarget == Home) return;
+                Target = newTarget;
                 _moveSound.Play();
                 Movement = SpiderMovement.Going;
-                Target = new Vector2(inputs.CursorPosition.X, inputs.CursorPosition.Y);
-                Target -= Vector2.Normalize(Target - Home) * 10;
                 var movementVector = Target - Home;
                 _movementDistanceSquared = movementVector.LengthSquared();
                 _direction = Vector2.Normalize(movementVector);
