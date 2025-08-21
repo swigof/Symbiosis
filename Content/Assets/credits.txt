@@ -35,4 +35,4 @@ Licensed under CC0
 Anything else
 swigof
 
-Made with Monogame, Backdash, GIMP, and Blender.
+Made with Monogame, Backdash, GIMP, Blender, and Audacity.
