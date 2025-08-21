@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Symbiosis.Entity;
 using Symbiosis.Session;
 
@@ -8,6 +9,8 @@ namespace Symbiosis.Manager;
 public static class CollisionManager
 {
     static readonly Circle _homeBoundingCircle = new Circle { Center = Spider.Home, Radius = 31 };
+    static readonly SoundEffect _snakeSound = Game1.GameContent.Load<SoundEffect>("snakehiss");
+    static readonly SoundEffect _eggSound = Game1.GameContent.Load<SoundEffect>("eggcrack");
 
     public static void Update(ref GameState gamestate)
     {
@@ -68,11 +71,13 @@ public static class CollisionManager
 
     private static void CheckFrog(ref GameState gamestate)
     {
+        if (gamestate.Frog.Respawning) return;
         for (var i = 0; i < gamestate.FrogEnemies.Length; i++)
         {
             if (!gamestate.FrogEnemies[i].Active || gamestate.FrogEnemies[i].Dead) continue;
             if (!gamestate.FrogEnemies[i].HeadBounds.Intersects(gamestate.Frog.BoundingCircle)) continue;
             var direction = Vector2.Normalize(gamestate.Frog.Position - gamestate.FrogEnemies[i].Position);
+            _snakeSound.Play(0.5f, 0, 0);
             gamestate.Frog.Respawning = true;
             gamestate.Frog.DeadDirection = direction;
             return;
@@ -94,6 +99,7 @@ public static class CollisionManager
                 {
                     gamestate.Clusters[i].EggEnemies[j].Active = false;
                     gamestate.EggCount--;
+                    _eggSound.Play(0.5f, 0, 0);
                     if (gamestate.EggCount <= 0)
                     {
                         gamestate.EggCount = 0;
