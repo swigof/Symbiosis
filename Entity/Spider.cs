@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Symbiosis.Input;
 using System;
 using System.Text.Json.Serialization;
+using Microsoft.Xna.Framework.Audio;
 using Symbiosis.Graphics;
 using static Symbiosis.Manager.CollisionManager;
 
@@ -31,6 +32,8 @@ public struct Spider : IBinarySerializable
     Sprite _idle = Game1.Atlas.CreateSprite("spider-idle");
     AnimatedSprite _moveAnimation = Game1.Atlas.CreateAnimatedSprite("spider-move-animation");
     AnimatedSprite _attackAnimation = Game1.Atlas.CreateAnimatedSprite("spider-attack-animation");
+    SoundEffect _biteSound = Game1.GameContent.Load<SoundEffect>("spiderbite");
+    SoundEffectInstance _moveSound = Game1.GameContent.Load<SoundEffect>("spiderscitter").CreateInstance();
     [JsonIgnore] public bool IsLocalPlayer = false;
     [JsonIgnore] public Circle BoundingCircle { get => new Circle { Center = Position, Radius = _radius }; }
 
@@ -43,6 +46,9 @@ public struct Spider : IBinarySerializable
         _idle.CenterOrigin();
         _moveAnimation.CenterOrigin();
         _attackAnimation.CenterOrigin();
+        _moveSound.IsLooped = true;
+        _moveSound.Play();
+        _moveSound.Pause();
     }
     
     public void Update(PlayerInputs inputs)
@@ -51,6 +57,7 @@ public struct Spider : IBinarySerializable
         {
             if (inputs.DigitalInputs.HasFlag(DigitalInputs.Click))
             {
+                _moveSound.Play();
                 Movement = SpiderMovement.Going;
                 Target = new Vector2(inputs.CursorPosition.X, inputs.CursorPosition.Y);
                 Target -= Vector2.Normalize(Target - Home) * 10;
@@ -67,6 +74,8 @@ public struct Spider : IBinarySerializable
 
             if ((Position - Home).LengthSquared() >= _movementDistanceSquared)
             {
+                _moveSound.Pause();
+                _biteSound.Play();
                 Position = Target;
                 Movement = SpiderMovement.Attacking;
             }
@@ -77,6 +86,7 @@ public struct Spider : IBinarySerializable
 
             if ((Position - Target).LengthSquared() >= _movementDistanceSquared)
             {
+                _moveSound.Pause();
                 Movement = SpiderMovement.None;
                 Position = Home;
                 Rotation = 0;
@@ -88,6 +98,7 @@ public struct Spider : IBinarySerializable
                 AttackFrame++;
             else
             {
+                _moveSound.Play();
                 AttackFrame = 0;
                 _attackAnimation.Reset();
                 Rotation += MathHelper.Pi;
