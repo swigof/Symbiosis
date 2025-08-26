@@ -13,10 +13,13 @@ the first time.
 As per usual, the architecture of this project isn't where I'd like it to be.
 Lots of things were left behind that I wanted to clean up or improve.
 
-### Project Setup
+### Setup & Dependencies
+
+Building this project requires the .NET 8.0 SDK which can be downloaded and installed from [here](https://dotnet.microsoft.com/download).
+After installing .NET and grabbing the project sources, run `dotnet restore` in the project directory to install the required packages.
 
 ```
-TODO
+TODO ASSETS
 ```
 
 ### Building & Packaging
