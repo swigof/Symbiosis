@@ -18,9 +18,8 @@ Lots of things were left behind that I wanted to clean up or improve.
 Building this project requires the .NET 8.0 SDK which can be downloaded and installed from [here](https://dotnet.microsoft.com/download).
 After installing .NET and grabbing the project sources, run `dotnet restore` in the project directory to install the required packages.
 
-```
-TODO ASSETS
-```
+Assets for the game can be downloaded from the release page [here](https://github.com/swigof/Symbiosis/releases/download/1.0.0/assets.zip).
+Simply unzip the contents of the archive into the project folder.
 
 ### Building & Packaging
 
